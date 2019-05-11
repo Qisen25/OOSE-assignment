@@ -45,4 +45,69 @@ public class PolicyAreas implements Policy
         }
        
     }
+
+    public void addPolicyKeyword(String keyword, String pName)
+    {
+       PolicyEntry policy = this.find(pName); 
+       if(policy != null)
+       {
+          policy.addKeyword(keyword); 
+       }    
+    }
+
+    public void addPolicyTalkPoint(String talkPoint, String pName)
+    {
+       PolicyEntry policy = this.find(pName); 
+       if(policy != null)
+       {
+           policy.addTalkingPoint(talkPoint); 
+       }
+    }
+   
+    public void setPolicyKeywords(Keywords keys)
+    {
+        for(Policy p : policies)
+        {
+            PolicyEntry pol = (PolicyEntry)p;
+            
+            Set<String> relatedKeyw = keys.getPolicyData(pol.getName());
+            if(relatedKeyw != null)
+            {
+                pol.setKeywords(relatedKeyw);
+            }
+        }
+    }
+
+    public void setPolicyTalkPoints(TalkingPoints points)
+    {
+        for(Policy p : policies)
+        {
+            PolicyEntry pol = (PolicyEntry)p;
+            
+            Set<String> relatedPts = points.getPolicyData(pol.getName());
+            
+            if(relatedPts != null)
+            {
+                pol.setTalkingPoints(relatedPts);
+            }
+        }
+    } 
+    
+    @Override
+    public void printKey()
+    {
+        for(Policy pol : policies)
+        {
+            pol.printKey();
+        }
+    }
+
+    @Override
+    public void printTalk()
+    {
+        for(Policy pol : policies)
+        {
+            pol.printTalk();
+        }
+    }
 }

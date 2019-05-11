@@ -29,9 +29,58 @@ public class PolicyEntry implements Policy
         return theEntry;
     }
 
+    public String getName()
+    {
+        return name;
+    }
+
+    public void addKeyword(String keyword)
+    {
+        keywords.add(keyword);
+    }
+
+    public void addTalkingPoint(String talkPoint)
+    {
+        talkingPoints.add(talkPoint); 
+    }
+    
+    public void setTalkingPoints(Set<String> points)
+    {
+        this.talkingPoints = points; 
+    }
+    
+    public void setKeywords(Set<String> keywords)
+    {
+        this.keywords = keywords; 
+    }
+    
     @Override
     public String toString()
     {
         return "PolicyEntry{" + "name=" + name + '}';
+    }
+    
+    @Override
+    public void printKey()
+    {
+        if(!this.keywords.isEmpty())
+        {
+            for(String key : keywords)
+            {
+                System.out.println(this.name + " keyword - " + key);
+            }
+        }
+    }
+    
+    @Override
+    public void printTalk()
+    {
+        if(!this.talkingPoints.isEmpty())
+        {
+            for(String talk : talkingPoints)
+            {
+                System.out.println(this.name + " talking point - " + talk);
+            }
+        }
     }
 }
