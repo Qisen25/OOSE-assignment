@@ -5,11 +5,11 @@ public abstract class Person
 
     private int id;
     private String name;
-    private String mobileNum;
+    private long mobileNum;
     private String twitterID;
     private String facebookID;
 
-    public Person(int id, String name, String mobileNum, String twitterID, String facebookID)
+    public Person(int id, String name, long mobileNum, String twitterID, String facebookID)
     {
         this.id = id;
         this.name = name;
@@ -28,7 +28,7 @@ public abstract class Person
         return name;
     }
 
-    public String getMobileNum()
+    public long getMobileNum()
     {
         return mobileNum;
     }
@@ -53,7 +53,7 @@ public abstract class Person
         this.name = name;
     }
 
-    public void setMobileNum(String mobileNum)
+    public void setMobileNum(long mobileNum)
     {
         this.mobileNum = mobileNum;
     }

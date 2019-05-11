@@ -18,10 +18,8 @@ public class testPerson
      */
     public static void main(String[] args)
     {
-        Candidate parry = new Candidate(1, "Parry", "00011111", null, null);
+        Candidate parry = new Candidate(1, "Parry", 00011111, null, null);
         PolicyAreas p = new PolicyAreas();
-        Keywords key = new Keywords();
-        TalkingPoints tp = new TalkingPoints();
         
         p.addPolicy("Poo dog god");
         
@@ -46,9 +44,9 @@ public class testPerson
             System.out.println("Nothing found");
         }
         
-        p.addPolicy("Crazy bets dream");
-        p.addPolicy("Gucci I'm rich");
-        p.addPolicy("Zhan musi ha deng");
+        p.addPolicy("Crazy");
+        p.addPolicy("Gucci");
+        p.addPolicy("Zhan");
         
         boolean tryAgain = false;
         String pName;
@@ -61,18 +59,16 @@ public class testPerson
             
             try
             {
+                tryAgain = false;
                 if(p.find(pName) != null && !pName.equalsIgnoreCase("exit"))
                 {
                     System.out.println("Policy " + pName + " found!" );
                     System.out.print("Enter a Keyword: ");  
                     String kw = sc.nextLine(); 
-                    key.addData(pName, kw);
+                    p.addPolicyKeyword(pName, kw);
                     System.out.print("Enter a talking pts: ");  
                     String tpts = sc.nextLine(); 
-                    tp.addData(pName, tpts);
-                    p.setPolicyKeywords(key);
-                    p.setPolicyTalkPoints(tp);
-                    tryAgain = false;
+                    p.addPolicyTalkPoint(pName, tpts);                 
                 }
                 else if(!pName.equalsIgnoreCase("exit"))
                 {
@@ -86,25 +82,28 @@ public class testPerson
             }
             
         }while(!pName.equalsIgnoreCase("exit") || tryAgain);
-
+        
         p.printKey();
         p.printTalk();
         
-        Set<String> keys = key.getAllThisData();
-        Set<String> points = tp.getAllThisData();
+        Set<String> k = p.getKeywords();
+        Set<String> t = p.getTalkPoints();
         
-        System.out.println("print all keywords");
-        for(String keyz : keys)
+        System.out.println(t.isEmpty());
+        
+        
+        System.out.println("Printing keywords from all policy areas");
+        for(String str : k)
         {
-            System.out.println(keyz);
+            System.out.println(str);
         }
-        
-        System.out.println("print all talkpoints");
-        for(String ptz : points)
+      
+        System.out.println("Printing talking points from all policy areas");
+        for(String str : t)
         {
-            System.out.println(ptz);
+            System.out.println(str);
         }
-        
+       
     }
     
     

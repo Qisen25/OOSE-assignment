@@ -2,7 +2,7 @@ package ecm.model;
 
 public class Strategist extends Person
 {
-    public Strategist(int id, String name, String mobileNum, String twitterID, String faceBookID) 
+    public Strategist(int id, String name, long mobileNum, String twitterID, String faceBookID) 
     {
         super(id, name, mobileNum, twitterID, faceBookID);
     }

@@ -55,6 +55,18 @@ public class PolicyEntry implements Policy
     }
     
     @Override
+    public Set<String> getKeywords()
+    {
+        return this.keywords;
+    }
+
+    @Override
+    public Set<String> getTalkPoints()
+    {
+        return this.talkingPoints;
+    }
+    
+    @Override
     public String toString()
     {
         return "PolicyEntry{" + "name=" + name + '}';

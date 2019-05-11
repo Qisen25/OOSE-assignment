@@ -5,13 +5,17 @@ import java.util.*;
  *
  * @author beepbeep
  */
-public class PolicyAreas implements Policy
+public class PolicyAreas implements Policy, TextObserver
 {
     private List<Policy> policies;
+    private Set<String> allKeywords;
+    private Set<String> allTalkpoints;
 
     public PolicyAreas()
     {
         this.policies = new ArrayList<Policy>();
+        allKeywords = new HashSet<String>();
+        allTalkpoints = new HashSet<String>();
     }
     
     @Override
@@ -46,7 +50,7 @@ public class PolicyAreas implements Policy
        
     }
 
-    public void addPolicyKeyword(String keyword, String pName)
+    public void addPolicyKeyword(String pName, String keyword)
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
@@ -55,7 +59,7 @@ public class PolicyAreas implements Policy
        }    
     }
 
-    public void addPolicyTalkPoint(String talkPoint, String pName)
+    public void addPolicyTalkPoint(String pName, String talkPoint)
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
@@ -63,35 +67,28 @@ public class PolicyAreas implements Policy
            policy.addTalkingPoint(talkPoint); 
        }
     }
-   
-    public void setPolicyKeywords(Keywords keys)
+
+    @Override
+    public Set<String> getKeywords()
     {
         for(Policy p : policies)
         {
-            PolicyEntry pol = (PolicyEntry)p;
-            
-            Set<String> relatedKeyw = keys.getPolicyData(pol.getName());
-            if(relatedKeyw != null)
-            {
-                pol.setKeywords(relatedKeyw);
-            }
+            allKeywords.addAll(p.getKeywords());
         }
+        
+        return allKeywords;
     }
 
-    public void setPolicyTalkPoints(TalkingPoints points)
+    @Override
+    public Set<String> getTalkPoints()
     {
         for(Policy p : policies)
         {
-            PolicyEntry pol = (PolicyEntry)p;
-            
-            Set<String> relatedPts = points.getPolicyData(pol.getName());
-            
-            if(relatedPts != null)
-            {
-                pol.setTalkingPoints(relatedPts);
-            }
+            allTalkpoints.addAll(p.getTalkPoints());
         }
-    } 
+        
+        return allTalkpoints;        
+    }
     
     @Override
     public void printKey()
