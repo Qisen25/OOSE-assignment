@@ -18,8 +18,10 @@ public class testPerson
      */
     public static void main(String[] args)
     {
-        Candidate parry = new Candidate(1, "Parry", 00011111, null, null);
+        Candidate parry = new Candidate(1, "Parry", 000, null, null);
         PolicyAreas p = new PolicyAreas();
+        TextData keys = new Keywords(p);
+        TextData talks = new TalkingPoints(p);
         
         p.addPolicy("Poo dog god");
         
@@ -31,8 +33,8 @@ public class testPerson
             System.out.println("Parry doesn't fucking have facebook!");
         }
         
-        p.addPolicyTalkPoint("Get out", "Poo dog god");
-        p.addPolicyKeyword("LOL", "Poo dog god");
+        keys.addData("Poo dog god", "Get out");
+        talks.addData("Poo dog god","LOL");
         
         p.printKey();
         p.printTalk();
@@ -65,10 +67,10 @@ public class testPerson
                     System.out.println("Policy " + pName + " found!" );
                     System.out.print("Enter a Keyword: ");  
                     String kw = sc.nextLine(); 
-                    p.addPolicyKeyword(pName, kw);
+                    keys.addData(pName, kw);
                     System.out.print("Enter a talking pts: ");  
                     String tpts = sc.nextLine(); 
-                    p.addPolicyTalkPoint(pName, tpts);                 
+                    talks.addData(pName, tpts);                 
                 }
                 else if(!pName.equalsIgnoreCase("exit"))
                 {
@@ -86,10 +88,8 @@ public class testPerson
         p.printKey();
         p.printTalk();
         
-        Set<String> k = p.getKeywords();
-        Set<String> t = p.getTalkPoints();
-        
-        System.out.println(t.isEmpty());
+        Set<String> k = keys.getAllThisData();
+        Set<String> t = talks.getAllThisData();
         
         
         System.out.println("Printing keywords from all policy areas");

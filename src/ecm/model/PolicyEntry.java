@@ -34,14 +34,20 @@ public class PolicyEntry implements Policy
         return name;
     }
 
-    public void addKeyword(String keyword)
+    public void addKeyword(String pName, String keyword)
     {
-        keywords.add(keyword);
+        if(this.name.equals(pName))
+        {
+            keywords.add(keyword);
+        }
     }
 
-    public void addTalkingPoint(String talkPoint)
+    public void addTalkingPoint(String pName, String talkPoint)
     {
-        talkingPoints.add(talkPoint); 
+        if(this.name.equals(pName))
+        {
+            talkingPoints.add(talkPoint); 
+        }
     }
     
     public void setTalkingPoints(Set<String> points)

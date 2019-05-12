@@ -8,14 +8,10 @@ import java.util.*;
 public class PolicyAreas implements Policy, TextObserver
 {
     private List<Policy> policies;
-    private Set<String> allKeywords;
-    private Set<String> allTalkpoints;
 
     public PolicyAreas()
     {
         this.policies = new ArrayList<Policy>();
-        allKeywords = new HashSet<String>();
-        allTalkpoints = new HashSet<String>();
     }
     
     @Override
@@ -50,27 +46,29 @@ public class PolicyAreas implements Policy, TextObserver
        
     }
 
-    public void addPolicyKeyword(String pName, String keyword)
+    public void addKeyword(String pName, String keyword)
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
-          policy.addKeyword(keyword); 
+          policy.addKeyword(pName, keyword); 
        }    
     }
 
-    public void addPolicyTalkPoint(String pName, String talkPoint)
+    public void addTalkingPoint(String pName, String talkPoint)
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
-           policy.addTalkingPoint(talkPoint); 
+           policy.addTalkingPoint(pName, talkPoint); 
        }
     }
 
     @Override
     public Set<String> getKeywords()
     {
+        Set<String> allKeywords = new HashSet<String>();
+        
         for(Policy p : policies)
         {
             allKeywords.addAll(p.getKeywords());
@@ -82,6 +80,8 @@ public class PolicyAreas implements Policy, TextObserver
     @Override
     public Set<String> getTalkPoints()
     {
+        Set<String> allTalkpoints = new HashSet<String>();
+        
         for(Policy p : policies)
         {
             allTalkpoints.addAll(p.getTalkPoints());
