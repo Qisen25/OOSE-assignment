@@ -2,6 +2,9 @@ package ecm.model;
 
 import java.util.*;
 
+/*
+ *Keywords
+ */
 public class Keywords implements TextData
 {
     private Map<String, Set<String>> policyKeywords;

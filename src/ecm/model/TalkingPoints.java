@@ -1,7 +1,9 @@
 package ecm.model;
 
 import java.util.*;
-
+/*
+ * talk points
+ */
 public class TalkingPoints implements TextData
 {
     private Map<String, Set<String>> policyTalk;

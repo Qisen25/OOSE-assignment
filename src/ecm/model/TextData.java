@@ -3,7 +3,7 @@ package ecm.model;
 import java.util.*;
 
 /**
- *
+ *Text interface
  * @author beepbeep
  */
 public interface TextData
