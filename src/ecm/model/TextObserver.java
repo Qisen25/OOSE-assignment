@@ -6,5 +6,5 @@ package ecm.model;
  */
 public interface TextObserver
 {
-    
+    public void dataUpdate();
 }

@@ -18,7 +18,7 @@ public class testPerson
      */
     public static void main(String[] args)
     {
-        Candidate parry = new Candidate(1, "Parry", 000, null, null);
+        Candidate parry = new Candidate(1, "Parry", 000L, null, null);
         PolicyAreas p = new PolicyAreas();
         TextData keys = new Keywords(p);
         TextData talks = new TalkingPoints(p);
@@ -84,6 +84,29 @@ public class testPerson
             }
             
         }while(!pName.equalsIgnoreCase("exit") || tryAgain);
+        
+        System.out.println("Enter a policy to remove");
+        pName = sc.nextLine();
+        
+
+        if(!p.getPolicyKeywords(pName).isEmpty())
+        {
+            System.out.println(pName + " has related keywords");
+            for(String str : p.getPolicyKeywords(pName))
+            {
+                System.out.println(str);
+            }
+            System.out.println("do you really want remove" + pName);
+            String op = sc.nextLine();
+            if(op.equals("yes"))
+            {
+                p.removePolicy(pName);
+            }
+            else
+            {
+                System.out.println(pName + " not removed");
+            }
+        }
         
         p.printKey();
         p.printTalk();

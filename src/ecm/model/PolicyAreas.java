@@ -5,7 +5,7 @@ import java.util.*;
  *
  * @author beepbeep
  */
-public class PolicyAreas implements Policy, TextObserver
+public class PolicyAreas implements Policy
 {
     private List<Policy> policies;
 
@@ -62,6 +62,17 @@ public class PolicyAreas implements Policy, TextObserver
        {
            policy.addTalkingPoint(pName, talkPoint); 
        }
+    }
+    
+    public Set<String> getPolicyKeywords(String pName)
+    {
+        PolicyEntry policy = this.find(pName);
+        if(policy != null)
+        {
+            return policy.getKeywords();
+        }
+        
+        return null;
     }
 
     @Override
