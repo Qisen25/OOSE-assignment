@@ -1,6 +1,6 @@
 package ecm.model;
 
-public abstract class Person
+public abstract class Person implements Member
 {
 
     private int id;
@@ -71,7 +71,7 @@ public abstract class Person
     @Override
     public String toString()
     {
-        return "id=" + id + ", name=" + name;
+        return "id=" + id + ", name=" + name + " " + mobileNum + " " + twitterID + " " + facebookID;
     }
 
 }

@@ -13,4 +13,21 @@ public class Strategist extends Person
         return "Strategist " + super.toString();
     }
 
+    /**
+     *find method defined by Member interface
+     * @param id
+     * @return
+     */
+    @Override
+    public Strategist find(int id)
+    {
+        Strategist strat = null;
+        
+        if(super.getId() == id)
+        {
+            strat = this;
+        }
+        
+        return strat;
+    }
 }

@@ -12,4 +12,22 @@ public class Volunteer extends Person
     {
         return "Volunteer " + super.toString();
     }
+
+    /**
+     *find method defined by Member interface
+     * @param id
+     * @return
+     */
+    @Override
+    public Volunteer find(int id)
+    {
+        Volunteer vol = null;
+        
+        if(super.getId() == id)
+        {
+            vol = this;
+        } 
+        
+        return vol;
+    }  
 }

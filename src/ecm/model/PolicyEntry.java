@@ -34,6 +34,7 @@ public class PolicyEntry implements Policy
         return name;
     }
 
+    @Override
     public void addKeyword(String pName, String keyword)
     {
         if(this.name.equals(pName))
@@ -42,12 +43,25 @@ public class PolicyEntry implements Policy
         }
     }
 
+    @Override
     public void addTalkingPoint(String pName, String talkPoint)
     {
         if(this.name.equals(pName))
         {
             talkingPoints.add(talkPoint); 
         }
+    }
+    
+    @Override
+    public void removeKeyword(String key)
+    {
+        this.keywords.remove(key);
+    }
+
+    @Override
+    public void removeTalkingPoint(String talk)
+    {
+        this.talkingPoints.remove(talk);
     }
     
     public void setTalkingPoints(Set<String> points)

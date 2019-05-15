@@ -11,6 +11,23 @@ public class Candidate extends Person
     public String toString()
     {
         return "Candidate " + super.toString();
+    } 
+
+    /**
+     *find method defined by Member interface
+     * @param id
+     * @return
+     */
+    @Override
+    public Candidate find(int id)
+    {
+        Candidate cand = null;
+        
+        if(super.getId() == id)
+        {
+            cand = this;
+        }
+        
+        return cand;
     }
-    
 }

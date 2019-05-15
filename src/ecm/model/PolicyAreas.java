@@ -8,10 +8,32 @@ import java.util.*;
 public class PolicyAreas implements Policy
 {
     private List<Policy> policies;
+    private List<PolicyObserver> observers;
 
     public PolicyAreas()
     {
         this.policies = new ArrayList<Policy>();
+        this.observers = new ArrayList<PolicyObserver>();
+    }
+    
+    public void addObserver(PolicyObserver obs)
+    {
+        observers.add(obs);
+        notifyObservers();
+    }
+    
+    public void removeObserver(TextObserver obs)
+    {
+        observers.remove(obs);
+        notifyObservers();
+    }
+    
+    public void notifyObservers()
+    {
+        for(PolicyObserver ob : observers)
+        {
+            ob.dataUpdate(this.policies);
+        }
     }
     
     @Override
@@ -29,9 +51,9 @@ public class PolicyAreas implements Policy
        return null;
     }
 
-    public void addPolicy(String name)
+    public void addPolicy(Policy pol)
     {
-        this.policies.add(new PolicyEntry(name));
+        this.policies.add(pol);
     }
     
     public void removePolicy(String name)
@@ -41,26 +63,54 @@ public class PolicyAreas implements Policy
         if(policy != null)
         {
             this.policies.remove(policy);
-            System.out.println("remove success");
+            System.out.println("remove policy success");
         }
        
     }
 
-    public void addKeyword(String pName, String keyword)
+    @Override
+    public void addKeyword(String pName, String keyword) throws PolicyNotFoundException
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
           policy.addKeyword(pName, keyword); 
-       }    
+       } 
+       else
+       {
+           throw new PolicyNotFoundException("Policy does not exist: " + pName);
+       }
     }
 
-    public void addTalkingPoint(String pName, String talkPoint)
+    @Override
+    public void addTalkingPoint(String pName, String talkPoint) throws PolicyNotFoundException
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
            policy.addTalkingPoint(pName, talkPoint); 
+       }
+       else
+       {
+           throw new PolicyNotFoundException("Policy does not exist: " + pName);
+       }
+    }
+    
+    @Override
+    public void removeKeyword(String keyword)
+    {
+       for(Policy p : policies)
+       {
+          p.removeKeyword(keyword); 
+       }    
+    }
+
+    @Override
+    public void removeTalkingPoint(String talkPoint)
+    {
+       for(Policy p : policies)
+       {
+           p.removeTalkingPoint(talkPoint); 
        }
     }
     

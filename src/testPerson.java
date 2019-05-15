@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 
+import ecm.view.PolicyViewer;
 import java.util.*;
 import ecm.model.*;
+import ecm.view.*;
+import ecm.controller.*;
 /**
  *
  * @author beepbeep
@@ -18,14 +21,33 @@ public class testPerson
      */
     public static void main(String[] args)
     {
-        Candidate parry = new Candidate(1, "Parry", 000L, null, null);
+        Scanner sc = new Scanner(System.in);
+        
+        Candidate parry = new Candidate(10, "Parry", 000L, null, null);
         PolicyAreas p = new PolicyAreas();
         TextData keys = new Keywords(p);
         TextData talks = new TalkingPoints(p);
+        Group grp = new Group();
         
-        p.addPolicy("Poo dog god");
+        PolicyFactory pMaker = new PolicyFactory();
+        MemberFactory maker = new MemberFactory();
+        PolicyAreaController pACtrl = new PolicyAreaController(pMaker, p);
+        GroupController grpCtrl = new GroupController(maker, grp);
+        TextDataController textCtrl = new TextDataController(keys, talks);
         
-        System.out.println(parry.toString() + " his mobile " + parry.getMobileNum());
+        PolicyViewer polObs = new PolicyViewer(p);
+        KeywordViewer keyObs = new KeywordViewer((Keywords)keys);
+        TalkingPointViewer talkObs = new TalkingPointViewer((TalkingPoints)talks);
+        
+        polObs.subscribe();
+        
+        keyObs.subscribe();
+        
+        talkObs.subscribe();
+        
+        p.addPolicy(pMaker.makePolicy("Poo dog god"));
+        
+        System.out.println(parry.toString());
         System.out.println(p.find("Poo dog god").toString());
         
         if(parry.getFacebookID() == null)
@@ -33,8 +55,37 @@ public class testPerson
             System.out.println("Parry doesn't fucking have facebook!");
         }
         
-        keys.addData("Poo dog god", "Get out");
-        talks.addData("Poo dog god","LOL");
+        System.out.println("**adding member**");
+        String adMoe;
+        do
+        {
+            int id;
+            long phone;
+            String namez;
+            String twit;
+            String fb;
+            
+            System.out.print("Enter a id:>");
+            id = sc.nextInt();
+            System.out.print("Enter name:>");
+            namez = sc.next();
+            System.out.print("Enter phone #:>");
+            phone = sc.nextLong();
+            System.out.print("Enter twitter:>");
+            twit = sc.next();
+            System.out.print("Enter facebook:>");
+            fb = sc.next();
+            
+            Member poop = new Volunteer(id, namez, phone, twit, fb);
+            grp.addMember(poop);
+            
+            System.out.print("Do you wish to add more y/n:>");
+            adMoe = sc.next();
+            sc.nextLine();
+            
+        }while(adMoe.equalsIgnoreCase("y"));
+        
+        grp.printDetails();
         
         p.printKey();
         p.printTalk();
@@ -46,87 +97,18 @@ public class testPerson
             System.out.println("Nothing found");
         }
         
-        p.addPolicy("Crazy");
-        p.addPolicy("Gucci");
-        p.addPolicy("Zhan");
+        p.addPolicy(pMaker.makePolicy("Crazy"));
+        p.addPolicy(pMaker.makePolicy("Gucci"));
+        p.addPolicy(pMaker.makePolicy("Zhan"));
         
-        boolean tryAgain = false;
-        String pName;
-        Scanner sc = new Scanner(System.in);
-        do
-        {
-            
-            System.out.print("Enter a policy name: ");  
-            pName = sc.nextLine(); 
-            
-            try
-            {
-                tryAgain = false;
-                if(p.find(pName) != null && !pName.equalsIgnoreCase("exit"))
-                {
-                    System.out.println("Policy " + pName + " found!" );
-                    System.out.print("Enter a Keyword: ");  
-                    String kw = sc.nextLine(); 
-                    keys.addData(pName, kw);
-                    System.out.print("Enter a talking pts: ");  
-                    String tpts = sc.nextLine(); 
-                    talks.addData(pName, tpts);                 
-                }
-                else if(!pName.equalsIgnoreCase("exit"))
-                {
-                    throw new IllegalArgumentException("Policy not existing");                   
-                }
-            }
-            catch(IllegalArgumentException e)
-            {
-                System.out.println(e.getMessage() + " try again");
-                tryAgain = true;
-            }
-            
-        }while(!pName.equalsIgnoreCase("exit") || tryAgain);
-        
-        System.out.println("Enter a policy to remove");
-        pName = sc.nextLine();
-        
-
-        if(!p.getPolicyKeywords(pName).isEmpty())
-        {
-            System.out.println(pName + " has related keywords");
-            for(String str : p.getPolicyKeywords(pName))
-            {
-                System.out.println(str);
-            }
-            System.out.println("do you really want remove" + pName);
-            String op = sc.nextLine();
-            if(op.equals("yes"))
-            {
-                p.removePolicy(pName);
-            }
-            else
-            {
-                System.out.println(pName + " not removed");
-            }
-        }
         
         p.printKey();
         p.printTalk();
         
-        Set<String> k = keys.getAllThisData();
-        Set<String> t = talks.getAllThisData();
+        Menu m = new Menu(keyObs, talkObs, polObs, grpCtrl, pACtrl, textCtrl);
+        MenuController menuz = new MenuController(m);
         
-        
-        System.out.println("Printing keywords from all policy areas");
-        for(String str : k)
-        {
-            System.out.println(str);
-        }
-      
-        System.out.println("Printing talking points from all policy areas");
-        for(String str : t)
-        {
-            System.out.println(str);
-        }
-       
+        menuz.showMenu();
     }
     
     

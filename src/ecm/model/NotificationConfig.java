@@ -1,4 +1,4 @@
-package ecm.controller;
+package ecm.model;
 
 import java.util.*;
 /**
