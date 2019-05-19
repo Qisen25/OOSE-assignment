@@ -8,7 +8,8 @@ import java.util.*;
 public class Group implements Member
 {
     private List<Member> members;
-
+    private List<KeywordObserver> observers;
+    
     public Group()
     {
         this.members = new ArrayList<Member>();
@@ -16,7 +17,7 @@ public class Group implements Member
     
     public void addMember(Member mem)
     {
-        this.members.add(mem);    
+        this.members.add(mem);  
     }
     
     public void removeMember(int id)
@@ -48,7 +49,7 @@ public class Group implements Member
 
     public List<Member> getMembers()
     {
-        return members;
+        return this.members;
     }
       
     public void printDetails()
@@ -58,5 +59,22 @@ public class Group implements Member
             Person p = (Person)m;
             System.out.println(p.toString());
         }
+    }
+
+    @Override
+    public long getMobileNum()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }        
+
+    @Override
+    public int getId()
+    {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void clearMembers()
+    {
+        members.clear();
     }
 }

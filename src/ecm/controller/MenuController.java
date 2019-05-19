@@ -14,8 +14,4 @@ public class MenuController
         this.theMenu = theMenu;
     }
     
-    public void showMenu()
-    {
-        theMenu.displayMenu();
-    }
 }

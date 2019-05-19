@@ -11,5 +11,6 @@ public class SMS
      * @param message*/
     public void sendSMS(long mobileNumber,String message)
     {
+        System.out.println("SMS notification sent to " + mobileNumber + ": \"" + message + "\"");
     }
 }

@@ -1,10 +1,14 @@
 package ecm.view;
 
+import ecm.controller.EcmIO;
 import java.util.*;
 import ecm.controller.GroupController;
 import ecm.controller.PolicyAreaController;
 import ecm.controller.TextDataController;
 import ecm.controller.InvalidMemberRoleException;
+import ecm.controller.MemberNotFoundException;
+import ecm.controller.NotificationHandler;
+import ecm.model.DuplicateException;
 import ecm.model.PolicyNotFoundException;
 
 /**
@@ -13,37 +17,41 @@ import ecm.model.PolicyNotFoundException;
  */
 public class Menu
 {
-    private KeywordViewer k;
-    private TalkingPointViewer t;
-    private PolicyViewer p;
+    private KeywordViewer kV;
+    private TalkingPointViewer tV;
+    private PolicyViewer pV;
+    private MemberViewer mV;
     private PolicyAreaController pCtrl;
     private GroupController grpCtrl;
     private TextDataController tCtrl;
-    private MemberViewer m;
+    private NotificationHandler notifHand;
     private String mainMenuMsg;
     private String viewDataMsg;
     private String addDataMsg;
     private String removeDataMsg;
+    private boolean loadStatus;
     
 
-    public Menu(KeywordViewer k, TalkingPointViewer t, PolicyViewer p, 
-            GroupController grpContr, PolicyAreaController pCtrl, TextDataController tCtrl)
+    public Menu(GroupController grpContr, PolicyAreaController pCtrl, NotificationHandler notifHand)
     {
-        this.k = k;
-        this.t = t;
-        this.p = p;
         this.pCtrl = pCtrl;
-        this.m = new MemberViewer();
         this.grpCtrl = grpContr;
-        this.tCtrl = tCtrl;
-        this.mainMenuMsg = "++Menu++ \n1. add data \n2. view data \n3. remove data \n0. Exit";
+        this.notifHand = notifHand;
+        this.mainMenuMsg = "++Menu++ \n1. add data \n2. view data \n3. remove data" + 
+                            "\n4. Notification settings \n0. Exit";
         this.viewDataMsg = "++View data++\n1. policy\n2. People \n3. keywords\n4. talking points";
-        this.addDataMsg = "++Add data++\n1. policy\n2. people\n3. keywords\n4. talking points";
+        this.addDataMsg = "++Add data++\n1. policy\n2. people\n3. keywords\n4. talking points" + 
+                          "\n5. load data from file ";
         this.removeDataMsg = "++Remove data++\n1. policy\n2. people\n3. keywords\n4. talking points";
+        this.loadStatus = false;
     }
        
-    public void displayMenu()
+    public void displayMenu(KeywordViewer k, TalkingPointViewer t, PolicyViewer p, MemberViewer m)
     {
+        this.kV = k;
+        this.tV = t;
+        this.pV = p;
+        this.mV = m;
         int choice;
         Scanner sc = new Scanner(System.in);
         
@@ -66,6 +74,11 @@ public class Menu
                 case 3:
                     removeData();
                     break;
+                    
+                case 4:
+                    notificationSettings();
+                    break;
+                    
                 case 0:
                     System.out.println("Exit");
                     break;
@@ -88,19 +101,19 @@ public class Menu
         switch (op)
         {
             case 1:
-                p.display();
+                pV.display();
                 break;
                 
             case 2:
-                m.display(grpCtrl);
+                mV.display();
                 break;
                 
             case 3:
-                k.display();
+                kV.displayMap();
                 break;
                 
             case 4:
-                t.display();
+                tV.displayMap();
                 break;
                 
             default:
@@ -108,9 +121,25 @@ public class Menu
         }
     }
     
+    private void loadData()
+    {
+        try
+        {   
+            EcmIO source = new EcmIO();
+            grpCtrl.loadMembers(source);
+            pCtrl.loadPolicies(source);
+            pCtrl.loadKeywords(source);
+            pCtrl.loadTalkingPoints(source);
+        }
+        catch(InvalidMemberRoleException | PolicyNotFoundException | DuplicateException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
     private void addData()
     {
         int op;
+        String loadChoice = "y";
         
         System.out.println(this.addDataMsg);
         System.out.print("operation:>");
@@ -132,9 +161,37 @@ public class Menu
             case 4:
                 addTalkingPoint();
                 break;
+                                            
+            case 5:
+                if(loadStatus)
+                {
+                    System.out.println("Are you sure want to reload data?  this will wipe current data. y/n");
+                    loadChoice = this.strInput();
+                }
+                if(loadChoice.equalsIgnoreCase("y"))
+                {
+                    loadData();
+                    this.loadStatus = true;
+                }
+                break;     
                 
             default:
                 break;
+        }
+    }
+    
+    public void notificationSettings()
+    {
+        System.out.println("1. add per-person per-policy setting \n2. remove per-person per-policy setting");
+        System.out.print("choice:>");
+        int op = this.intInput();
+        if(op == 1)
+        {
+            addUserSetting();
+        }
+        else if(op == 2)
+        {
+            removeUserSetting();
         }
     }
     
@@ -177,9 +234,9 @@ public class Menu
             String name = this.strInput();
             System.out.print("Enter a keyword:> ");
             String key = this.strInput();
-            tCtrl.addKeyword(name, key);
+            pCtrl.addKeyword(name, key);
         }
-        catch(PolicyNotFoundException e)
+        catch(PolicyNotFoundException | DuplicateException e)
         {
             System.out.println(e.getMessage());
         }
@@ -193,26 +250,73 @@ public class Menu
             String name = this.strInput();
             System.out.print("Enter a talking point:> ");
             String talk = this.strInput();
-            tCtrl.addKeyword(name, talk);
+            pCtrl.addTalkingPoint(name, talk);
         }
-        catch(PolicyNotFoundException e)
+        catch(PolicyNotFoundException | DuplicateException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    public void addUserSetting()
+    {
+        try
+        {
+            System.out.print("Enter member id:> ");
+            int id = this.intInput();
+            grpCtrl.find(id);
+            System.out.print("Enter policy name:> ");
+            String pName = this.strInput();
+            pCtrl.find(pName);
+            
+            notifHand.addUsrSetting(id, pName);
+        }
+        catch(PolicyNotFoundException | MemberNotFoundException e)
         {
             System.out.println(e.getMessage());
         }
     }
 
+    public void removeUserSetting()
+    {
+        try
+        {
+            System.out.print("Enter member id:> ");
+            int id = this.intInput();
+            grpCtrl.find(id);
+            System.out.print("Enter policy name:> ");
+            String pName = this.strInput();
+            pCtrl.find(pName);
+            
+            notifHand.removeUsrSetting(id, pName);
+        }
+        catch(PolicyNotFoundException | MemberNotFoundException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+    
     private void removeData()
     {
         System.out.println(this.removeDataMsg);
         System.out.print("choice:>");
         int choice = this.intInput();
-        if(choice == 1)
+        switch (choice)
         {
-            removePolicy();
-        }
-        else if(choice == 2)
-        {
-            removeMember();
+            case 1:
+                removePolicy();
+                break;
+            case 2:
+                removeMember();
+                break;
+            case 3:
+                removeKeyword();
+                break;
+            case 4:
+                removeTalkPoint();
+                break;
+            default:
+                break;
         }
     }
     
@@ -228,6 +332,38 @@ public class Menu
         System.out.print("Enter id of member:> ");
         int id = this.intInput();
         grpCtrl.removeMember(id);
+    }
+    
+    private void removeKeyword()
+    {
+        try
+        {
+            System.out.print("Enter name of policy:> ");
+            String policy = this.strInput();
+            System.out.print("Enter a keyword of policy given:> ");
+            String keyw = this.strInput();
+            pCtrl.removeKeyword(policy, keyw);
+        }
+        catch(PolicyNotFoundException | NoSuchElementException e)
+        {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+    private void removeTalkPoint()
+    {
+        try
+        {
+            System.out.print("Enter name of policy:> ");
+            String policy = this.strInput();
+            System.out.print("Enter a talking point of policy given:> ");
+            String talk = this.strInput();
+            pCtrl.removeTalkingPoint(policy, talk);
+        }
+        catch(PolicyNotFoundException | NoSuchElementException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
     
     private String strInput()

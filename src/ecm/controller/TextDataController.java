@@ -1,40 +1,20 @@
 package ecm.controller;
 
 import ecm.model.PolicyNotFoundException;
-import ecm.model.TextData;
+import ecm.model.PolicyAreas;
 //import ecm.model.Keywords;
 /**
- *
+ * tTODO REMOVE THIS class
  * @author beepbeep
  */
 public class TextDataController
 {
-    private TextData keywords;
-    private TextData talkingPoints;
+    private PolicyAreas pAreas;
 
-    public TextDataController(TextData keywords, TextData talkingPoints)
+    public TextDataController(PolicyAreas pAreas)
     {
-        this.keywords = keywords;
-        this.talkingPoints = talkingPoints;
+        this.pAreas = pAreas;
     }
     
-    public void addKeyword(String policyName, String key) throws PolicyNotFoundException
-    {
-        keywords.addData(policyName, key);
-    }
-    
-    public void addTalkingPoint(String policyName, String key) throws PolicyNotFoundException
-    {
-        talkingPoints.addData(policyName, key);
-    }
-    
-    public void removeKeyword(String policyName, String key)
-    {
-        keywords.removeData(key);
-    }
-    
-    public void removeTalkingPoint(String policyName, String key)
-    {
-        talkingPoints.removeData(key);
-    }
+
 }

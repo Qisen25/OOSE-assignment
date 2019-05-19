@@ -35,32 +35,48 @@ public class PolicyEntry implements Policy
     }
 
     @Override
-    public void addKeyword(String pName, String keyword)
+    public void addKeyword(String pName, String keyword) throws DuplicateException
     {
+        boolean notExist;
+        
         if(this.name.equals(pName))
         {
-            keywords.add(keyword);
+            notExist = keywords.add(keyword);
+            
+            if(!notExist)
+                throw new DuplicateException("Keyword: " + keyword + " already exists in policy: " + pName);
         }
     }
 
     @Override
-    public void addTalkingPoint(String pName, String talkPoint)
+    public void addTalkingPoint(String pName, String talkPoint) throws DuplicateException
     {
+        boolean notExist;
+        
         if(this.name.equals(pName))
         {
-            talkingPoints.add(talkPoint); 
+            notExist = talkingPoints.add(talkPoint); 
+            
+            if(!notExist)
+                throw new DuplicateException("Talking point: " + talkPoint + " already exists in policy: " + pName);
         }
     }
     
     @Override
-    public void removeKeyword(String key)
+    public void removeKeyword(String polName, String key) throws NoSuchElementException
     {
+        if(!this.keywords.contains(key))
+            throw new NoSuchElementException("Keyword " + key + " does not exist");
+        
         this.keywords.remove(key);
     }
 
     @Override
-    public void removeTalkingPoint(String talk)
+    public void removeTalkingPoint(String polName, String talk)
     {
+        if(!this.talkingPoints.contains(talk))
+            throw new NoSuchElementException("Talking point " + talk + " does not exist");
+        
         this.talkingPoints.remove(talk);
     }
     
@@ -90,29 +106,5 @@ public class PolicyEntry implements Policy
     public String toString()
     {
         return "PolicyEntry{" + "name=" + name + '}';
-    }
-    
-    @Override
-    public void printKey()
-    {
-        if(!this.keywords.isEmpty())
-        {
-            for(String key : keywords)
-            {
-                System.out.println(this.name + " keyword - " + key);
-            }
-        }
-    }
-    
-    @Override
-    public void printTalk()
-    {
-        if(!this.talkingPoints.isEmpty())
-        {
-            for(String talk : talkingPoints)
-            {
-                System.out.println(this.name + " talking point - " + talk);
-            }
-        }
     }
 }

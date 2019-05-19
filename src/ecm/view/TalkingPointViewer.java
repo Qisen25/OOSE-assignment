@@ -1,42 +1,86 @@
 package ecm.view;
 
-import ecm.model.TalkingPoints;
-import ecm.model.TextData;
+import java.util.Collection;
 import java.util.Set;
-import ecm.model.TextObserver;
+import ecm.model.PolicyAreas;
+import ecm.model.TalkingPointObserver;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  *
  * @author beepbeep
  */
-public class TalkingPointViewer implements TextObserver
+public class TalkingPointViewer implements TalkingPointObserver
 {
-    private TalkingPoints talkPointContainer;
+    private PolicyAreas pArea;
     private Set<String> allTalk;
+    private Map<String, Set<String>> policyWithTalk;
 
-    public TalkingPointViewer(TalkingPoints talkPoint)
+    public TalkingPointViewer(PolicyAreas pArea)
     {
-        this.talkPointContainer = talkPoint;
+        this.pArea= pArea;
+        this.allTalk= new HashSet<String>();
+        this.policyWithTalk = new HashMap<String, Set<String>>();
     }
-    
+        
     @Override
     public void subscribe()
     {
-        talkPointContainer.addObserver(this);
+        pArea.addTPObserver(this);
+    }
+
+    @Override
+    public void unsubscribe()
+    {
+        pArea.removeTPObserver(this);
     }
     
     @Override
-    public void dataUpdate(Set<String> data)
+    public void talkingPointSetUpdate(Set<String> data, String policyName, String recentKeyword)
     {
         this.allTalk = data;
     }
     
-    public void display()
+    public void displaySet()
     {
         System.out.println("Talking points found in system");
         for(String str : allTalk)
         {
             System.out.println(str);
         }
+    }
+    
+    public void displayMap()
+    {
+        System.out.println("Talking pointss found in system");
+        for(Map.Entry<String, Set<String>> ent : this.policyWithTalk.entrySet())
+        {
+            for(String key : ent.getValue())
+            {
+                System.out.println("Talking point: \"" + key + "\" from policy: " + ent.getKey());
+            }
+        }
+    }
+
+
+
+    @Override
+    public void removeTalkingPointSetUpdate(Set<String> data, String policyName, String recentTalkPoint)
+    {
+        this.allTalk = data;
+    }
+
+    @Override
+    public void talkingPointMapUpdate(Map<String, Set<String>> data)
+    {
+        this.policyWithTalk = data;
+    }
+
+    @Override
+    public void removeTalkingPointMapUpdate(Map<String, Set<String>> data)
+    {
+        this.policyWithTalk = data;
     }
 }

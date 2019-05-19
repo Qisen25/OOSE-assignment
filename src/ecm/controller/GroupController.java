@@ -33,8 +33,24 @@ public class GroupController
         grp.removeMember(id);
     }
     
-    public List<Member> getAllMembers()
+    public void find(int id) throws MemberNotFoundException
     {
-        return grp.getMembers();
+        if(grp.find(id) == null)
+        {
+            throw new MemberNotFoundException("Member " + id + " not found");
+        }
+    }
+    
+    public void loadMembers(EcmIO source) throws InvalidMemberRoleException
+    {
+        grp.clearMembers();
+        
+        String detailOfMembers[] = source.fetchMembers().split("\n");
+        
+        for(String details : detailOfMembers)
+        {
+            String field[] = details.split(",");
+            addMember(field);
+        }
     }
 }

@@ -9,7 +9,7 @@ public class NotificationConfig
 {
     private static NotificationConfig instance = null;
     
-    public static NotificationConfig getConfig()
+    public static NotificationConfig getInstance()
     {
         if(instance == null)
         {
@@ -35,6 +35,11 @@ public class NotificationConfig
     public void addPersonAndPolicy(int id, String policy)
     {
         personAndPolicy.put(id, policy);
+    }
+    
+    public void removePersonAndPolicy(int id, String policy)
+    {
+        personAndPolicy.remove(id, policy);
     }
 
     public Map<Integer, String> getPersonAndPolicy()

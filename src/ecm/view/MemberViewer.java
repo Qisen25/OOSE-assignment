@@ -1,21 +1,29 @@
 package ecm.view;
 
 import ecm.model.Member;
+import ecm.model.Group;
 import ecm.controller.GroupController;
+import java.util.Collection;
 import java.util.List;
+import ecm.model.KeywordObserver;
 
 /**
  *
  * @author beepbeep
  */
 public class MemberViewer
-{ 
-    public void display(GroupController grpC)
+{
+    private Group grp;
+
+    public MemberViewer(Group grp)
     {
-        List<Member> mem = grpC.getAllMembers();
-        
+        this.grp = grp;
+    }
+
+    public void display()
+    {   
         System.out.println("All members found on system");
-        for(Member m : mem)
+        for(Member m : grp.getMembers())
         {
             System.out.println(m.toString());
         }

@@ -8,31 +8,69 @@ import java.util.*;
 public class PolicyAreas implements Policy
 {
     private List<Policy> policies;
-    private List<PolicyObserver> observers;
+    private List<KeywordObserver> keywordObs;
+    private List<TalkingPointObserver> talkObs;
 
     public PolicyAreas()
     {
         this.policies = new ArrayList<Policy>();
-        this.observers = new ArrayList<PolicyObserver>();
+        this.keywordObs = new ArrayList<KeywordObserver>();
+        this.talkObs = new ArrayList<TalkingPointObserver>();
     }
     
-    public void addObserver(PolicyObserver obs)
+    public void addKWObserver(KeywordObserver obs)
     {
-        observers.add(obs);
-        notifyObservers();
+        keywordObs.add(obs);
     }
     
-    public void removeObserver(TextObserver obs)
+    public void removeKWObserver(KeywordObserver obs)
     {
-        observers.remove(obs);
-        notifyObservers();
+        keywordObs.remove(obs);
     }
     
-    public void notifyObservers()
+    public void notifyKWObservers(String relatedPolicy, String recentKeyword)
     {
-        for(PolicyObserver ob : observers)
+        for(KeywordObserver ob : keywordObs)
         {
-            ob.dataUpdate(this.policies);
+            ob.keywordSetUpdate(this.getKeywords(), relatedPolicy, recentKeyword);
+            ob.keywordMapUpdate(this.getPolicyWithKeywords());
+        }
+    }
+    
+    public void notifyKWRemoval(String relatedPolicy, String recentKeyword)
+    {
+        for(KeywordObserver ob : keywordObs)
+        {
+            ob.removeKeywordSetUpdate(this.getKeywords(), relatedPolicy, recentKeyword);
+            ob.removeKeywordMapUpdate(this.getPolicyWithKeywords());
+        }
+    }
+    
+    public void addTPObserver(TalkingPointObserver obs)
+    {
+        talkObs.add(obs);
+    }
+    
+    public void removeTPObserver(TalkingPointObserver obs)
+    {
+        talkObs.remove(obs);
+    }
+    
+    public void notifyTPObservers(String relatedPolicy, String recentTalkPoint)
+    {
+        for(TalkingPointObserver ob : talkObs)
+        {
+            ob.talkingPointSetUpdate(this.getTalkPoints(), relatedPolicy, recentTalkPoint);
+            ob.talkingPointMapUpdate(this.getPolicyWithTalk());
+        }
+    }
+    
+    public void notifyTPRemoval(String relatedPolicy, String recentTalkPoint)
+    {
+        for(TalkingPointObserver ob : talkObs)
+        {
+            ob.removeTalkingPointSetUpdate(this.getTalkPoints(), relatedPolicy, recentTalkPoint);
+            ob.removeTalkingPointMapUpdate(this.getPolicyWithTalk());
         }
     }
     
@@ -69,12 +107,13 @@ public class PolicyAreas implements Policy
     }
 
     @Override
-    public void addKeyword(String pName, String keyword) throws PolicyNotFoundException
+    public void addKeyword(String pName, String keyword) throws PolicyNotFoundException, DuplicateException
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
-          policy.addKeyword(pName, keyword); 
+          policy.addKeyword(pName, keyword);
+          this.notifyKWObservers(pName, keyword);
        } 
        else
        {
@@ -83,12 +122,13 @@ public class PolicyAreas implements Policy
     }
 
     @Override
-    public void addTalkingPoint(String pName, String talkPoint) throws PolicyNotFoundException
+    public void addTalkingPoint(String pName, String talkPoint) throws PolicyNotFoundException, DuplicateException
     {
        PolicyEntry policy = this.find(pName); 
        if(policy != null)
        {
            policy.addTalkingPoint(pName, talkPoint); 
+           this.notifyTPObservers(pName, talkPoint);
        }
        else
        {
@@ -97,32 +137,60 @@ public class PolicyAreas implements Policy
     }
     
     @Override
-    public void removeKeyword(String keyword)
+    public void removeKeyword(String polName, String keyword) throws PolicyNotFoundException, NoSuchElementException
     {
-       for(Policy p : policies)
-       {
-          p.removeKeyword(keyword); 
-       }    
+        Policy pol = this.find(polName);
+        
+        if(pol == null)
+            throw new PolicyNotFoundException("Policy " + polName + " not found");
+        
+        pol.removeKeyword(polName, keyword);
+        
+        this.notifyKWRemoval(polName, keyword);
     }
 
     @Override
-    public void removeTalkingPoint(String talkPoint)
+    public void removeTalkingPoint(String polName, String talkPoint) throws PolicyNotFoundException, NoSuchElementException
     {
-       for(Policy p : policies)
-       {
-           p.removeTalkingPoint(talkPoint); 
-       }
+        Policy pol = this.find(polName);
+        
+        if(pol == null)
+            throw new PolicyNotFoundException("Policy " + polName + " not found");
+        
+        pol.removeTalkingPoint(polName, talkPoint); 
+        
+        this.notifyTPRemoval(polName, talkPoint);
     }
     
-    public Set<String> getPolicyKeywords(String pName)
+    public Map<String, Set<String>> getPolicyWithKeywords()
     {
-        PolicyEntry policy = this.find(pName);
-        if(policy != null)
+        Map<String, Set<String>> policyKeyMap = new HashMap<String, Set<String>>();
+        
+        for(Policy policy : this.policies)
         {
-            return policy.getKeywords();
+            PolicyEntry pol = (PolicyEntry)policy;
+            policyKeyMap.put(pol.getName(), pol.getKeywords());
         }
         
-        return null;
+        return policyKeyMap;
+    }
+    
+    public Map<String, Set<String>> getPolicyWithTalk()
+    {
+        Map<String, Set<String>> policyKeyMap = new HashMap<String, Set<String>>();
+        
+        for(Policy policy : this.policies)
+        {
+            PolicyEntry pol = (PolicyEntry)policy;
+            policyKeyMap.put(pol.getName(), pol.getTalkPoints());
+        }
+        
+        return policyKeyMap;
+    }
+
+    public List<Policy> getPolicies()
+    {
+        return policies;
     }
 
     @Override
@@ -151,21 +219,8 @@ public class PolicyAreas implements Policy
         return allTalkpoints;        
     }
     
-    @Override
-    public void printKey()
+    public void clearPolicies()
     {
-        for(Policy pol : policies)
-        {
-            pol.printKey();
-        }
-    }
-
-    @Override
-    public void printTalk()
-    {
-        for(Policy pol : policies)
-        {
-            pol.printTalk();
-        }
+        policies.clear();
     }
 }
