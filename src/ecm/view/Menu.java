@@ -17,10 +17,7 @@ import ecm.model.PolicyNotFoundException;
  */
 public class Menu
 {
-    private KeywordViewer kV;
-    private TalkingPointViewer tV;
-    private PolicyViewer pV;
-    private MemberViewer mV;
+
     private PolicyAreaController pCtrl;
     private GroupController grpCtrl;
     private TextDataController tCtrl;
@@ -46,12 +43,8 @@ public class Menu
         this.loadStatus = false;
     }
        
-    public void displayMenu(KeywordViewer k, TalkingPointViewer t, PolicyViewer p, MemberViewer m)
+    public void displayMenu(PolicyViewer p , MemberViewer m, KeywordViewer k , TalkingPointViewer t)
     {
-        this.kV = k;
-        this.tV = t;
-        this.pV = p;
-        this.mV = m;
         int choice;
         Scanner sc = new Scanner(System.in);
         
@@ -68,7 +61,7 @@ public class Menu
                     break;
                     
                 case 2:
-                    viewData();
+                    viewData(p, m, k, t);
                     break;
                    
                 case 3:
@@ -90,35 +83,44 @@ public class Menu
         }while(choice != 0);
     }
  
-    private void viewData()
+    private void viewData(PolicyViewer pV , MemberViewer mV, KeywordViewer kV , TalkingPointViewer tV)
     {
         int op;
         Scanner sc = new Scanner(System.in);
+        Viewer view = null;
         
-        System.out.println(this.viewDataMsg);
-        System.out.print("operation:>");
+        System.out.println(this.viewDataMsg + "\n0. Back to main menu");
+        System.out.print("choice:> ");
         op = this.intInput();
         switch (op)
         {
             case 1:
-                pV.display();
+                view = pV;
                 break;
                 
             case 2:
-                mV.display();
+                view = mV;
                 break;
                 
             case 3:
-                kV.displayMap();
+                view = kV;
                 break;
                 
             case 4:
-                tV.displayMap();
+                view = tV;
                 break;
                 
             default:
                 break;
         }
+        
+        if(view !=null)
+            displayView(view);
+    }
+    
+    private void displayView(Viewer view)
+    {
+        view.display();
     }
     
     private void loadData()
@@ -141,8 +143,8 @@ public class Menu
         int op;
         String loadChoice = "y";
         
-        System.out.println(this.addDataMsg);
-        System.out.print("operation:>");
+        System.out.println(this.addDataMsg + "\n0. Back to main menu");
+        System.out.print("choice:> ");
         op = this.intInput();
         switch (op)
         {
@@ -182,8 +184,10 @@ public class Menu
     
     public void notificationSettings()
     {
-        System.out.println("1. add per-person per-policy setting \n2. remove per-person per-policy setting");
-        System.out.print("choice:>");
+        System.out.println("1. add per-person per-policy setting" + 
+                            "\n2. remove per-person per-policy setting" + 
+                            "\n3. show current settings \n0. Back to main menu");
+        System.out.print("choice:> ");
         int op = this.intInput();
         if(op == 1)
         {
@@ -192,6 +196,10 @@ public class Menu
         else if(op == 2)
         {
             removeUserSetting();
+        }
+        else if(op == 3)
+        {
+            showUsrSettings();
         }
     }
     
@@ -288,7 +296,7 @@ public class Menu
             String pName = this.strInput();
             pCtrl.find(pName);
             
-            notifHand.removeUsrSetting(id, pName);
+            notifHand.removeUsrSetting(id);
         }
         catch(PolicyNotFoundException | MemberNotFoundException e)
         {
@@ -298,8 +306,8 @@ public class Menu
     
     private void removeData()
     {
-        System.out.println(this.removeDataMsg);
-        System.out.print("choice:>");
+        System.out.println(this.removeDataMsg + "\n0. Back to main menu");
+        System.out.print("choice:> ");
         int choice = this.intInput();
         switch (choice)
         {
@@ -325,6 +333,7 @@ public class Menu
         System.out.print("Enter name of policy:> ");
         String name = this.strInput();
         pCtrl.removePolicy(name);
+        notifHand.removeUsrSettingByPolicy(name);
     }
     
     private void removeMember()
@@ -332,6 +341,7 @@ public class Menu
         System.out.print("Enter id of member:> ");
         int id = this.intInput();
         grpCtrl.removeMember(id);
+        notifHand.removeUsrSetting(id);
     }
     
     private void removeKeyword()
@@ -364,6 +374,17 @@ public class Menu
         {
             System.out.println(e.getMessage());
         }
+    }
+    
+    private void showUsrSettings()
+    {
+        System.out.println("++Current settings configured++");
+        Map<Integer, String> personAndPolicy = this.notifHand.getUsrConfig();
+        
+        for(Map.Entry<Integer, String> pp : personAndPolicy.entrySet())
+        {
+            System.out.println("Member ID: " + pp.getKey() + " | related policy: " + pp.getValue());
+        }  
     }
     
     private String strInput()

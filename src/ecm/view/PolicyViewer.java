@@ -9,7 +9,7 @@ import ecm.model.KeywordObserver;
  *
  * @author beepbeep
  */
-public class PolicyViewer
+public class PolicyViewer implements Viewer
 {
     private PolicyAreas polAreas;
 
@@ -18,9 +18,10 @@ public class PolicyViewer
         this.polAreas = polAreas;
     }
 
+    @Override
     public void display()
     {
-        System.out.println("Policies found in system");
+        System.out.println("++Policies found in system++");
         for(Policy pol : polAreas.getPolicies())
         {
             System.out.println(pol.toString());

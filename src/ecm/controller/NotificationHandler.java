@@ -99,9 +99,14 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         notCfg.addPersonAndPolicy(id, policy);
     }
     
-    public void removeUsrSetting(Integer id, String policy)
+    public void removeUsrSetting(Integer id)
     {
-        notCfg.removePersonAndPolicy(id, policy);
+        notCfg.removePersonAndPolicy(id);
+    }
+    
+    public void removeUsrSettingByPolicy(String policy)
+    {
+        notCfg.removeByPolicy(policy);
     }
     
     public boolean userWhiteListCheck(int id, String policyName)
@@ -121,6 +126,11 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }
         
         return inList;
+    }
+    
+    public Map<Integer, String> getUsrConfig()
+    {
+        return this.notCfg.getPersonAndPolicy();   
     }
 
     @Override

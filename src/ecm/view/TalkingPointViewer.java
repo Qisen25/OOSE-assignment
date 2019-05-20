@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author beepbeep
  */
-public class TalkingPointViewer implements TalkingPointObserver
+public class TalkingPointViewer implements TalkingPointObserver, Viewer
 {
     private PolicyAreas pArea;
     private Set<String> allTalk;
@@ -42,10 +42,16 @@ public class TalkingPointViewer implements TalkingPointObserver
     {
         this.allTalk = data;
     }
+
+    @Override
+    public void display()
+    {
+        System.out.println("++Talking points found in system++");
+        this.displayMap();
+    }
     
     public void displaySet()
-    {
-        System.out.println("Talking points found in system");
+    {      
         for(String str : allTalk)
         {
             System.out.println(str);
@@ -54,7 +60,6 @@ public class TalkingPointViewer implements TalkingPointObserver
     
     public void displayMap()
     {
-        System.out.println("Talking pointss found in system");
         for(Map.Entry<String, Set<String>> ent : this.policyWithTalk.entrySet())
         {
             for(String key : ent.getValue())
@@ -63,8 +68,6 @@ public class TalkingPointViewer implements TalkingPointObserver
             }
         }
     }
-
-
 
     @Override
     public void removeTalkingPointSetUpdate(Set<String> data, String policyName, String recentTalkPoint)

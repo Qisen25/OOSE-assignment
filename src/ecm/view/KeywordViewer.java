@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author beepbeep
  */
-public class KeywordViewer implements KeywordObserver
+public class KeywordViewer implements KeywordObserver, Viewer
 {
     private PolicyAreas pArea;
     private Set<String> allKeywords;
@@ -41,9 +41,15 @@ public class KeywordViewer implements KeywordObserver
         this.allKeywords = data;
     }
 
+    @Override
+    public void display()
+    {
+        System.out.println("++Keywords found in system++");
+        this.displayMap();
+    }
+
     public void displaySet()
     {
-        System.out.println("Keywords found in system");
         for(String str : allKeywords)
         {
             System.out.println(str);
@@ -51,8 +57,7 @@ public class KeywordViewer implements KeywordObserver
     }
     
     public void displayMap()
-    {
-        System.out.println("Keywords found in system");
+    {       
         for(Map.Entry<String, Set<String>> ent : this.policyWithKeyw.entrySet())
         {
             for(String key : ent.getValue())

@@ -11,7 +11,7 @@ import ecm.model.KeywordObserver;
  *
  * @author beepbeep
  */
-public class MemberViewer
+public class MemberViewer implements Viewer
 {
     private Group grp;
 
@@ -20,9 +20,10 @@ public class MemberViewer
         this.grp = grp;
     }
 
+    @Override
     public void display()
     {   
-        System.out.println("All members found on system");
+        System.out.println("++All members found on system++");
         for(Member m : grp.getMembers())
         {
             System.out.println(m.toString());

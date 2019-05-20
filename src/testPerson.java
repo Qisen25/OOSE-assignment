@@ -104,7 +104,7 @@ public class testPerson
         Menu m = new Menu(grpCtrl, pACtrl, notifHand);
         //MenuController menuz = new MenuController(m);
         
-        m.displayMenu(keyObs, talkObs, polObs, memObs);
+        m.displayMenu(polObs, memObs, keyObs, talkObs);
     }
     
     

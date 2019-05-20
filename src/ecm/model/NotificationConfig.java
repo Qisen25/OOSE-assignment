@@ -37,9 +37,20 @@ public class NotificationConfig
         personAndPolicy.put(id, policy);
     }
     
-    public void removePersonAndPolicy(int id, String policy)
+    public void removePersonAndPolicy(int id)
     {
-        personAndPolicy.remove(id, policy);
+        personAndPolicy.remove(id);
+    }
+    
+    public void removeByPolicy(String policy)
+    {
+        for(Map.Entry<Integer, String> usrcfg : personAndPolicy.entrySet())
+        {
+            if(usrcfg.getValue().equalsIgnoreCase(policy))
+            {
+                personAndPolicy.remove(usrcfg.getKey());
+            }
+        }
     }
 
     public Map<Integer, String> getPersonAndPolicy()

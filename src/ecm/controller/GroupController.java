@@ -33,12 +33,14 @@ public class GroupController
         grp.removeMember(id);
     }
     
-    public void find(int id) throws MemberNotFoundException
+    public Member find(int id) throws MemberNotFoundException
     {
         if(grp.find(id) == null)
         {
             throw new MemberNotFoundException("Member " + id + " not found");
         }
+        
+        return grp.find(id);
     }
     
     public void loadMembers(EcmIO source) throws InvalidMemberRoleException
