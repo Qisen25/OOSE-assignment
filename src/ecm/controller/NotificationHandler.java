@@ -156,4 +156,9 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     {
         this.talkMap = data;
     }
+    
+    public void clearUsrConfig()
+    {
+        this.notCfg.clearSettings();
+    }
 }

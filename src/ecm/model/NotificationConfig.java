@@ -18,17 +18,11 @@ public class NotificationConfig
         return instance;
     }
 
-    private String whenAddKeyword;
-    private String whenKeywordTrends;
-    private String whenTalkPointAdd;
     private Map<Integer, String> personAndPolicy;
     
     
     private NotificationConfig()
     {
-        this.whenAddKeyword = "volunteer";
-        this.whenKeywordTrends = "volunteer and candidates";
-        this.whenTalkPointAdd = "Everyone";
         this.personAndPolicy = new HashMap<Integer, String>();
     }
     
@@ -57,34 +51,9 @@ public class NotificationConfig
     {
         return this.personAndPolicy;
     }
-
-    public String getWhenAddKeyword()
+    
+    public void clearSettings()
     {
-        return whenAddKeyword;
-    }
-
-    public String getWhenKeywordTrends()
-    {
-        return whenKeywordTrends;
-    }
-
-    public String getWhenTalkPointAdd()
-    {
-        return whenTalkPointAdd;
-    }
-
-    public void setWhenAddKeyword(String whenAddKeyword)
-    {
-        this.whenAddKeyword = whenAddKeyword;
-    }
-
-    public void setWhenKeywordTrends(String whenKeywordTrends)
-    {
-        this.whenKeywordTrends = whenKeywordTrends;
-    }
-
-    public void setWhenTalkPointAdd(String whenTalkPointAdd)
-    {
-        this.whenTalkPointAdd = whenTalkPointAdd;
+        personAndPolicy.clear();
     }
 }

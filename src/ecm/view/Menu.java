@@ -38,7 +38,7 @@ public class Menu
                             "\n4. Notification settings \n0. Exit";
         this.viewDataMsg = "++View data++\n1. policy\n2. People \n3. keywords\n4. talking points";
         this.addDataMsg = "++Add data++\n1. policy\n2. people\n3. keywords\n4. talking points" + 
-                          "\n5. load data from file ";
+                          "\n5. load all data from file ";
         this.removeDataMsg = "++Remove data++\n1. policy\n2. people\n3. keywords\n4. talking points";
         this.loadStatus = false;
     }
@@ -132,6 +132,7 @@ public class Menu
             pCtrl.loadPolicies(source);
             pCtrl.loadKeywords(source);
             pCtrl.loadTalkingPoints(source);
+            notifHand.clearUsrConfig();
         }
         catch(InvalidMemberRoleException | PolicyNotFoundException | DuplicateException e)
         {
@@ -167,13 +168,12 @@ public class Menu
             case 5:
                 if(loadStatus)
                 {
-                    System.out.println("Are you sure want to reload data?  this will wipe current data. y/n");
+                    System.out.println("Are you sure want to reload data? current data and settings will be wiped. y/n");
                     loadChoice = this.strInput();
                 }
                 if(loadChoice.equalsIgnoreCase("y"))
                 {
                     loadData();
-                    this.loadStatus = true;
                 }
                 break;     
                 

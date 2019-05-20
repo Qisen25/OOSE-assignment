@@ -1,6 +1,5 @@
 package ecm.view;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,10 +7,10 @@ import java.util.Set;
  *
  * @author beepbeep
  */
-public class FacebookHandler extends FacebookMessenger
+public class TwitterPostScout extends TwitterMessenger
 {
 
-    public FacebookHandler()
+    public TwitterPostScout()
     {
         super();
     }
@@ -21,5 +20,5 @@ public class FacebookHandler extends FacebookMessenger
     {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-        
+    
 }
