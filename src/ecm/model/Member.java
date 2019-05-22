@@ -10,4 +10,6 @@ public interface Member
     public String toString();
     public long getMobileNum();
     public int getId();
+    public String getTwitterID();
+    public String getFacebookID();
 }

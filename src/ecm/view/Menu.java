@@ -184,9 +184,9 @@ public class Menu
     
     public void notificationSettings()
     {
-        System.out.println("1. add per-person per-policy setting" + 
-                            "\n2. remove per-person per-policy setting" + 
-                            "\n3. show current settings \n0. Back to main menu");
+        System.out.println("1. add per-person per-policy setting");
+        System.out.println("2. remove per-person per-policy setting");
+        System.out.println("3. show current settings \n0. Back to main menu");
         System.out.print("choice:> ");
         int op = this.intInput();
         if(op == 1)

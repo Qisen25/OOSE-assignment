@@ -8,7 +8,9 @@ import ecm.model.NotificationConfig;
 import ecm.model.PolicyAreas;
 import ecm.model.TalkingPointObserver;
 import ecm.model.Volunteer;
+import ecm.view.FacebookMessenger;
 import ecm.view.SMS;
+import ecm.view.TwitterMessenger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,15 +24,20 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     private PolicyAreas pAreas;
     private Group grp;
     private SMS sms;
+    private TwitterMessenger tMsg;
+    private FacebookMessenger fbMsg;
     private NotificationConfig notCfg;
     private Map<String, Set<String>> keywordMap;
     private Map<String, Set<String>> talkMap;
 
-    public NotificationHandler(PolicyAreas pAreas, Group grp, SMS sms)
+    public NotificationHandler(PolicyAreas pAreas, Group grp, SMS sms, TwitterMessenger tMsg, 
+                                FacebookMessenger fbMsg)
     {
         this.pAreas = pAreas;
         this.grp = grp;
         this.sms = sms;
+        this.tMsg = tMsg;
+        this.fbMsg = fbMsg;
         this.notCfg = NotificationConfig.getInstance();
     }
             
@@ -56,7 +63,18 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             //System.out.println("Notifying");
             if(m instanceof Volunteer || this.userWhiteListCheck(m.getId(), policyName))
             {
-                sms.sendSMS(m.getMobileNum(), "Keyword added: " + keyword);
+                if(m.getMobileNum() != 0)
+                {
+                    sms.sendSMS(m.getMobileNum(), "Keyword added: " + keyword);
+                }
+                if(!m.getTwitterID().isEmpty())
+                {
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword added: " + keyword);
+                }
+                if(!m.getFacebookID().isEmpty())
+                {
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword added: " + keyword);
+                }
             }
         }
     }
@@ -66,9 +84,20 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     {
         for(Member m : grp.getMembers())
         {
-            if(this.userWhiteListCheck(m.getId(), policyName))
+            if(userWhiteListCheck(m.getId(), policyName))
             {
-                sms.sendSMS(m.getMobileNum(), "Keyword removed: " + recentKeyword);
+                if(m.getMobileNum() != 0)
+                {
+                    sms.sendSMS(m.getMobileNum(), "Keyword remove: " + recentKeyword);
+                }
+                if(!m.getTwitterID().isEmpty())
+                {
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword remove: " + recentKeyword);
+                }
+                if(!m.getFacebookID().isEmpty())
+                {
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword remove: " + recentKeyword);
+                }
             }
         }
     }
@@ -78,7 +107,18 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     {
         for(Member m : grp.getMembers())
         {
-            sms.sendSMS(m.getMobileNum(), "Talking point added: " + recentTalk);
+            if(m.getMobileNum() != 0)
+            {
+                sms.sendSMS(m.getMobileNum(), "Talking point added: " + recentTalk);
+            }
+            if(!m.getTwitterID().isEmpty())
+            {
+                tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point added: " + recentTalk);
+            }
+            if(!m.getFacebookID().isEmpty())
+            {
+                fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point added: " + recentTalk);
+            }
         }    
     }
     
@@ -87,9 +127,20 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     {   
         for(Member m : grp.getMembers())
         {
-            if(this.userWhiteListCheck(m.getId(), policyName))
+            if(userWhiteListCheck(m.getId(), policyName))
             {
-                sms.sendSMS(m.getMobileNum(), "Talking point removed: " + recentTalk);
+                if(m.getMobileNum() != 0)
+                {
+                    sms.sendSMS(m.getMobileNum(), "Talking point removed: " + recentTalk);
+                }
+                if(!m.getTwitterID().isEmpty())
+                {
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point removed: " + recentTalk);
+                }
+                if(!m.getFacebookID().isEmpty())
+                {
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point removed: " + recentTalk);
+                }
             }
         }    
     }

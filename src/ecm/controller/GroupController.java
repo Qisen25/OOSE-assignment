@@ -51,7 +51,7 @@ public class GroupController
         
         for(String details : detailOfMembers)
         {
-            String field[] = details.split(",");
+            String field[] = details.split(",", -1);
             addMember(field);
         }
     }

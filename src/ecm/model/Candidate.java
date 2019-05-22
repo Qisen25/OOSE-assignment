@@ -30,4 +30,5 @@ public class Candidate extends Person
         
         return cand;
     }
+
 }

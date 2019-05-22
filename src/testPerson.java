@@ -27,6 +27,8 @@ public class testPerson
         PolicyAreas p = new PolicyAreas();
         Group grp = new Group();
         SMS sms = new SMS();
+        TwitterMessenger twit = new TwitterPostScout();
+        FacebookMessenger fb = new FacebookPostScout();
         
         PolicyFactory pMaker = new PolicyFactory();
         MemberFactory maker = new MemberFactory();
@@ -37,7 +39,10 @@ public class testPerson
         MemberViewer memObs = new MemberViewer(grp);
         KeywordViewer keyObs = new KeywordViewer(p);
         TalkingPointViewer talkObs = new TalkingPointViewer(p);
-        NotificationHandler notifHand = new NotificationHandler(p, grp, sms);
+        NotificationHandler notifHand = new NotificationHandler(p, grp, sms, twit, fb);
+        
+        FBPostMonitor kwm = new FBPostMonitor(fb, p);
+        TweetMonitor twm = new TweetMonitor(twit, p);
         
         notifHand.subscribe();
         
@@ -45,6 +50,12 @@ public class testPerson
         
         talkObs.subscribe();
         
+        kwm.subscribe();
+        twm.subscribe();
+        
+        kwm.setPost();
+        twm.setPost();
+
 //        p.addPolicy(pMaker.makePolicy("Poo dog god"));
 //        
 //        System.out.println(parry.toString());
@@ -99,12 +110,23 @@ public class testPerson
 //        p.addPolicy(pMaker.makePolicy("Crazy"));
 //        p.addPolicy(pMaker.makePolicy("Gucci"));
 //        p.addPolicy(pMaker.makePolicy("Zhan"));
-
+//        TimerTask task = new FBPostMonitor();
+//        
+//        Timer timer = new Timer();
+//        timer.schedule(task, 10, 600);
         
         Menu m = new Menu(grpCtrl, pACtrl, notifHand);
         //MenuController menuz = new MenuController(m);
         
         m.displayMenu(polObs, memObs, keyObs, talkObs);
+        
+        
+        Timer timer = new Timer();
+        timer.schedule(kwm, 100, 2000);
+        timer.schedule(twm, 100, 2000);
+        
+        
+
     }
     
     

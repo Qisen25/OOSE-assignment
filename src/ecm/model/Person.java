@@ -71,7 +71,8 @@ public abstract class Person implements Member
     @Override
     public String toString()
     {
-        return "id=" + id + ", name=" + name + " " + mobileNum + " " + twitterID + " " + facebookID;
+        return "id:" + id + ", name:" + name + ", phone:" + mobileNum + 
+                ", Twitter:" + twitterID + ", Facebook:" + facebookID;
     }
 
 }
