@@ -41,8 +41,8 @@ public class testPerson
         TalkingPointViewer talkObs = new TalkingPointViewer(p);
         NotificationHandler notifHand = new NotificationHandler(p, grp, sms, twit, fb);
         
-        FBPostMonitor kwm = new FBPostMonitor(fb, p);
-        TweetMonitor twm = new TweetMonitor(twit, p);
+        FBPostMonitor kwm = new FBPostMonitor(fb, p, notifHand);
+        TweetMonitor twm = new TweetMonitor(twit, p, notifHand);
         
         notifHand.subscribe();
         
@@ -53,8 +53,8 @@ public class testPerson
         kwm.subscribe();
         twm.subscribe();
         
-        kwm.setPost();
-        twm.setPost();
+        kwm.setNotificationHandler();
+        twm.setNotificationHandler();
 
 //        p.addPolicy(pMaker.makePolicy("Poo dog god"));
 //        
@@ -122,9 +122,10 @@ public class testPerson
         
         
         Timer timer = new Timer();
-        timer.schedule(kwm, 100, 2000);
-        timer.schedule(twm, 100, 2000);
-        
+        //timer.schedule(kwm, 100, 2000);
+        //timer.schedule(twm, 100, 60000);
+        timer.schedule(twm, 100, 1000);
+        timer.schedule(kwm, 100, 1000);
         
 
     }

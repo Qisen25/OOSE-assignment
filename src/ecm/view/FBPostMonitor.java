@@ -1,5 +1,6 @@
 package ecm.view;
 
+import ecm.controller.NotificationHandler;
 import ecm.model.KeywordObserver;
 import ecm.model.PolicyAreas;
 import ecm.view.FacebookMessenger;
@@ -21,40 +22,44 @@ public class FBPostMonitor extends TimerTask implements KeywordObserver
     private PolicyAreas pArea;
     private TwitterMessenger twitter;
     private FacebookMessenger facebook;
-    private LinkedList<String> post;
+    private LinkedList<String> fpost;
     private Map<String, Integer> kMap;
+    private NotificationHandler notifHand;
 
-    public FBPostMonitor(FacebookMessenger facebook, PolicyAreas pArea)
+    public FBPostMonitor(FacebookMessenger facebook, PolicyAreas pArea, NotificationHandler notifHand)
     {
         this.pArea = pArea;
         this.facebook = facebook;
-        this.post = new LinkedList<String>();
+        this.fpost = new LinkedList<String>();
         this.kMap  = ((FacebookPostScout)this.facebook).keyMap;
+        this.notifHand = notifHand;
     }
-    
-    public void setPost()
+        
+    public void setFBPost()
     {
         for(int i = 0; i < 10; i++)
         {
-            this.post.add("empire is here");
+            this.fpost.add("wage increase");
         }
     }
 
     @Override
     public void run()
     {        
-        String keypost = this.post.remove();
-        
-        for(Map.Entry<String, Integer> entry : kMap.entrySet())
-        {
-            if(keypost.contains(entry.getKey()))
-            {
-                int count = entry.getValue();
-                kMap.put(entry.getKey(), count + 1);
-            }
-        }
-        
+//        String keypost = this.post.remove();
+//        
+//        for(Map.Entry<String, Integer> entry : kMap.entrySet())
+//        {
+//            if(keypost.contains(entry.getKey()))
+//            {
+//                int count = entry.getValue();
+//                kMap.put(entry.getKey(), count + 1);
+//            }
+//        }
+//        
         this.facebook.keywordsDetected(kMap, System.currentTimeMillis() / 1000);
+
+        this.notifHand.notifyTrend();
     }
 
     @Override
@@ -79,6 +84,11 @@ public class FBPostMonitor extends TimerTask implements KeywordObserver
     public void removeKeywordSetUpdate(Set<String> data, String policy, String keyword)
     {
         this.facebook.setKeywords(data);
+    }
+    
+    public void setNotificationHandler()
+    {
+        ((FacebookPostScout)facebook).setNotificationHandler(this.notifHand);
     }
 
     @Override

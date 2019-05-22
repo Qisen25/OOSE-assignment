@@ -1,17 +1,21 @@
 
 package ecm.controller;
 
+import ecm.model.Candidate;
 import ecm.model.Group;
 import ecm.model.KeywordObserver;
 import ecm.model.Member;
 import ecm.model.NotificationConfig;
 import ecm.model.PolicyAreas;
+import ecm.model.Strategist;
 import ecm.model.TalkingPointObserver;
 import ecm.model.Volunteer;
 import ecm.view.FacebookMessenger;
 import ecm.view.SMS;
 import ecm.view.TwitterMessenger;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +33,9 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     private NotificationConfig notCfg;
     private Map<String, Set<String>> keywordMap;
     private Map<String, Set<String>> talkMap;
+    private Map<String, Integer> twitTrends;
+    private Map<String, Integer> fbTrends;
+     private Map<String, Integer> socialMediaTrends;
 
     public NotificationHandler(PolicyAreas pAreas, Group grp, SMS sms, TwitterMessenger tMsg, 
                                 FacebookMessenger fbMsg)
@@ -39,6 +46,9 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         this.tMsg = tMsg;
         this.fbMsg = fbMsg;
         this.notCfg = NotificationConfig.getInstance();
+        this.socialMediaTrends = new HashMap<String, Integer>();
+        this.twitTrends = new HashMap<String, Integer>();
+        this.fbTrends = new HashMap<String, Integer>();
     }
             
     @Override
@@ -145,6 +155,60 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }    
     }
   
+    public void notifyTrend()
+    {
+        this.addTotalTrend();
+        
+        for(Map.Entry<String, Integer> entry : this.socialMediaTrends.entrySet())
+        {
+            if(entry.getValue() >= 5)
+            {
+                for(String policy : this.trendRelatedPolicy(entry.getKey()))
+                {
+                    for(Member m : grp.getMembers())
+                    {                   
+                        if(m instanceof Volunteer || m instanceof Strategist || userWhiteListCheck(m.getId(), policy))
+                        {
+                            if(m.getMobileNum() != 0)
+                            {
+                                sms.sendSMS(m.getMobileNum(), "Keyword " + entry.getKey() + " trending");
+                            }
+                            if(!m.getTwitterID().isEmpty())
+                            {
+                                tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword " + entry.getKey() + " trending");
+                            }
+                            if(!m.getFacebookID().isEmpty())
+                            {
+                                fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword " + entry.getKey() + " trending");
+                            }
+                        }
+                    } 
+                }
+            }
+        }
+    }
+    
+    
+    public void setTwitterTrend(Map<String, Integer> data)
+    {
+        this.twitTrends = data;
+    }
+    
+    public void setFacebookTrend(Map<String, Integer> data)
+    {
+        this.fbTrends = data;
+    }
+    
+    public void addTotalTrend()
+    {
+        this.socialMediaTrends.putAll(twitTrends);
+        
+        for(Map.Entry<String, Integer> entry : fbTrends.entrySet())
+        {
+            socialMediaTrends.put(entry.getKey(), socialMediaTrends.get(entry.getKey()) + entry.getValue());
+        }
+    }
+    
     public void addUsrSetting(Integer id, String policy)
     {
         notCfg.addPersonAndPolicy(id, policy);
@@ -177,6 +241,22 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }
         
         return inList;
+    }
+    
+    public Set<String> trendRelatedPolicy(String trendKey)
+    {
+        Set<String> trendPolicies = new HashSet<String>();
+        
+        for(Map.Entry<String, Set<String>> keywRelatePolicy : pAreas.getPolicyWithKeywords().entrySet())
+        {
+            for(String str : keywRelatePolicy.getValue())
+            {
+                if(str.equals(trendKey))
+                    trendPolicies.add(keywRelatePolicy.getKey());
+            }
+        }
+        
+        return trendPolicies;
     }
     
     public Map<Integer, String> getUsrConfig()
