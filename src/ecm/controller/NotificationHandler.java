@@ -35,7 +35,11 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     private Map<String, Set<String>> talkMap;
     private Map<String, Integer> twitTrends;
     private Map<String, Integer> fbTrends;
-     private Map<String, Integer> socialMediaTrends;
+    private Map<String, Integer> socialMediaTrends;
+    private Map<String, Long> searchTimes;
+    private Map<String, Boolean> holdOffNotif;
+    private Map<String, Integer> initialTrend;
+    private long firstScanMins;
 
     public NotificationHandler(PolicyAreas pAreas, Group grp, SMS sms, TwitterMessenger tMsg, 
                                 FacebookMessenger fbMsg)
@@ -49,6 +53,10 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         this.socialMediaTrends = new HashMap<String, Integer>();
         this.twitTrends = new HashMap<String, Integer>();
         this.fbTrends = new HashMap<String, Integer>();
+        this.searchTimes = new HashMap<String, Long>();
+        this.holdOffNotif = new HashMap<String, Boolean>();
+        this.initialTrend = new HashMap<String, Integer>();
+        this.firstScanMins = 0;
     }
             
     @Override
@@ -70,7 +78,6 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     {        
         for(Member m : grp.getMembers())
         {
-            //System.out.println("Notifying");
             if(m instanceof Volunteer || this.userWhiteListCheck(m.getId(), policyName))
             {
                 if(m.getMobileNum() != 0)
@@ -155,15 +162,27 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }    
     }
   
-    public void notifyTrend()
+    public void notifyTrend(long scheduleMins)
     {
         this.addTotalTrend();
         
+        if(firstScanMins == 0)
+            this.firstScanMins = scheduleMins;
+        
         for(Map.Entry<String, Integer> entry : this.socialMediaTrends.entrySet())
-        {
-            if(entry.getValue() >= 5)
+        {   
+            //set default for search map
+            if(!this.searchTimes.containsKey(entry.getKey()))
+                this.searchTimes.put(entry.getKey(), scheduleMins);
+            
+            //set the hold off notification map default
+            if(!this.holdOffNotif.containsKey(entry.getKey()))
+                this.holdOffNotif.put(entry.getKey(), false);
+             
+            if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) == 60)//only trend if greater than 50 and within 1hr 
+                                                                                                 // since first search
             {
-                for(String policy : this.trendRelatedPolicy(entry.getKey()))
+                for(String policy : this.trendRelatedPolicy(entry.getKey()))//find policies with related keywords
                 {
                     for(Member m : grp.getMembers())
                     {                   
@@ -171,23 +190,46 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
                         {
                             if(m.getMobileNum() != 0)
                             {
-                                sms.sendSMS(m.getMobileNum(), "Keyword " + entry.getKey() + " trending");
+                                sms.sendSMS(m.getMobileNum(), "Keyword \"" + entry.getKey() + "\" trending in " + policy);
                             }
                             if(!m.getTwitterID().isEmpty())
                             {
-                                tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword " + entry.getKey() + " trending");
+                                tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword \"" + entry.getKey() + "\" trending in " + policy);
                             }
                             if(!m.getFacebookID().isEmpty())
                             {
-                                fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword " + entry.getKey() + " trending");
+                                fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword \"" + entry.getKey() + "\" trending in " + policy);
                             }
                         }
                     } 
                 }
+                
+                this.initialTrend.put(entry.getKey(), entry.getValue());
+            }
+            else if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) > 60)
+            {    
+                this.searchTimes.put(entry.getKey(), scheduleMins);// store trending keyword and time if 1 hour period reached  
+                this.holdOffNotif.put(entry.getKey(), true);// set keyword to hold off
             }
         }
     }
     
+    public boolean isTrending(String keyword)
+    {
+        if(!this.initialTrend.containsKey(keyword))
+            this.initialTrend.put(keyword, 0);//add to map that keeps track of keyword previous trend number
+        
+        checkAfterHoldPeriod(keyword);
+        
+        boolean trending = this.socialMediaTrends.get(keyword) - this.initialTrend.get(keyword) >= 50;
+        
+        return trending && !this.holdOffNotif.get(keyword);
+    }
+    
+    public long timeSinceSearch(String keyword)
+    {
+       return (System.currentTimeMillis() / 60000) - this.searchTimes.get(keyword);
+    }
     
     public void setTwitterTrend(Map<String, Integer> data)
     {
@@ -259,9 +301,46 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         return trendPolicies;
     }
     
+    /**
+     * check if 24 hours has passed
+     * @param keyword
+     * @param currentSchedMins
+     * @return long telling whether to notify or not
+     */
+    public void checkAfterHoldPeriod(String keyword)
+    {
+        boolean notifyOrNot;
+        
+        long firstSearch = this.searchTimes.get(keyword);
+        long currentSchedMins = System.currentTimeMillis() / 60000;
+
+        notifyOrNot = (currentSchedMins - firstSearch >= 1440);
+
+        if(notifyOrNot) // if more than 24 hours has passed then set the update last search time
+        {
+            this.holdOffNotif.put(keyword, false);//, currentSchedMins);
+        }
+                    
+    }
+    
+    public boolean keywordOnHold(String keyword)
+    {
+        if(!this.holdOffNotif.isEmpty())
+        {
+            return this.holdOffNotif.get(keyword);
+        }
+        
+        return false;
+    }
+    
     public Map<Integer, String> getUsrConfig()
     {
         return this.notCfg.getPersonAndPolicy();   
+    }
+
+    public Map<String, Long> getHoldOffNotify()
+    {
+        return searchTimes;
     }
 
     @Override

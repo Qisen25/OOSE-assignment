@@ -19,14 +19,9 @@ public abstract class FacebookMessenger
     //template method this most likely to call hook
     public void setKeywords(Set<String> keywords)
     {
-        Map<String, Integer> keyMap = new HashMap<String, Integer>();
-                
-        for(String key : keywords)
-        {
-            keyMap.putIfAbsent(key, 0);
-        }
-        
-        keywordsDetected(keyMap, System.currentTimeMillis()/1000);
+        PostMonitor mon = PostMonitor.getInstance();
+        mon.setSearchFBMap(keywords);
+        mon.connectFB(this);
     }
 
     //#hook method

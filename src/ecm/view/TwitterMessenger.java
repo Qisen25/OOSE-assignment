@@ -15,6 +15,9 @@ public abstract class TwitterMessenger
 
     public void setKeywords(Set<String> keywords)
     {
+        PostMonitor mon = PostMonitor.getInstance();
+        mon.setSearchTwitterMap(keywords);
+        mon.connectTwitter(this);
     }
 
     protected abstract void keywordsDetected(Map<String, Integer> keywords,

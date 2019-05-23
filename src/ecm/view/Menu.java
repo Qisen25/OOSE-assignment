@@ -26,10 +26,11 @@ public class Menu
     private String viewDataMsg;
     private String addDataMsg;
     private String removeDataMsg;
+    private PostMonitor mon;
     private boolean loadStatus;
     
 
-    public Menu(GroupController grpContr, PolicyAreaController pCtrl, NotificationHandler notifHand)
+    public Menu(GroupController grpContr, PolicyAreaController pCtrl, NotificationHandler notifHand, PostMonitor mon)
     {
         this.pCtrl = pCtrl;
         this.grpCtrl = grpContr;
@@ -41,6 +42,7 @@ public class Menu
                           "\n5. load all data from file ";
         this.removeDataMsg = "++Remove data++\n1. policy\n2. people\n3. keywords\n4. talking points";
         this.loadStatus = false;
+        this.mon = mon;
     }
        
     public void displayMenu(PolicyViewer p , MemberViewer m, KeywordViewer k , TalkingPointViewer t)
@@ -133,6 +135,10 @@ public class Menu
             pCtrl.loadKeywords(source);
             pCtrl.loadTalkingPoints(source);
             notifHand.clearUsrConfig();
+            
+            Timer timer = new Timer();
+
+            timer.schedule(this.mon, 0, 60000);
         }
         catch(InvalidMemberRoleException | PolicyNotFoundException | DuplicateException e)
         {

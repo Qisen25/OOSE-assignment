@@ -1,7 +1,10 @@
-package ecm.view;
+ package ecm.view;
 
 import ecm.controller.NotificationHandler;
+import ecm.model.KeywordObserver;
+import ecm.model.PolicyAreas;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -10,63 +13,62 @@ import java.util.Set;
  *
  * @author beepbeep
  */
-public class FacebookPostScout extends FacebookMessenger
+public class FacebookPostScout extends FacebookMessenger implements KeywordObserver
 {
-    protected Map<String, Integer> keyMap;
-    private LinkedList<String> fpost;
-    private NotificationHandler notifHand;
-
+    private PolicyAreas pArea;
     //should set up set fo strings here
-    public FacebookPostScout()
+    public FacebookPostScout(PolicyAreas pArea)
     {
         super();
-        this.keyMap = new HashMap<String, Integer>();
-        this.fpost = new LinkedList<String>();
-        this.setFBPost();
-    }
-    
-    @Override
-    public void setKeywords(Set<String> keywords)
-    {
-        System.out.println("setting keywords for post scout");
-        for(String key : keywords)
-        {
-            this.keyMap.put(key, 0);
-        }
+        this.pArea = pArea;
     }
 
     @Override
     protected void keywordsDetected(Map<String, Integer> keywords, long timestamp)
-    { 
-        if(fpost.isEmpty() || keyMap.isEmpty())
-            System.exit(0);
-                
-        String fbpost = this.fpost.remove();
-        
+    {         
         for(Map.Entry<String, Integer> entry : keywords.entrySet())
         {
-            if(fbpost.contains(entry.getKey()))
-            {
-                int count = entry.getValue();
-                keyMap.put(entry.getKey(), count + 1);
-            }
             System.out.println("keyword: \"" + entry.getKey() + "\" detected on Facebook " 
                                 + entry.getValue() + " times at " + timestamp + " sec") ;
         }
         
-        this.notifHand.setFacebookTrend(keyMap);
+        //this.notifHand.setFacebookTrend(keyMap);
+    }
+
+    @Override
+    public void subscribe()
+    {
+        this.pArea.addKWObserver(this);
+    }
+
+    @Override
+    public void unsubscribe()
+    {
+        this.pArea.removeKWObserver(this);
+    }
+
+    @Override
+    public void keywordSetUpdate(Set<String> data, String recentPolicy, String keyword)
+    {
+        this.setKeywords(data);     
+    }
+
+    @Override
+    public void removeKeywordSetUpdate(Set<String> data, String policy, String keyword)
+    {
+        this.setKeywords(data);
+    }
+
+    @Override
+    public void keywordMapUpdate(Map<String, Set<String>> data)
+    {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeKeywordMapUpdate(Map<String, Set<String>> data)
+    {
+        //hrow new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void setFBPost()
-    {
-        for(int i = 0; i < 10; i++)
-        {
-            this.fpost.add("wage increase");
-        }
-    }
-    
-    public void setNotificationHandler(NotificationHandler not)
-    {
-        this.notifHand = not;
-    }
 }
