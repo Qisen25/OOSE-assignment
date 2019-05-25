@@ -54,12 +54,14 @@ public class PolicyAreaController
         pAreas.removeTalkingPoint(policyName, key);
     }
     
-    public void find(String polName) throws PolicyNotFoundException
+    public Policy find(String polName) throws PolicyNotFoundException
     {
         if(pAreas.find(polName) == null)
         {
             throw new PolicyNotFoundException("Policy " + polName + " not found");
         }
+        
+        return pAreas.find(polName);
     }
     
     public void loadPolicies(EcmIO source) throws InvalidMemberRoleException

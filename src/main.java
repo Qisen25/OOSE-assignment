@@ -1,3 +1,9 @@
+import ecm.view.SMS;
+import ecm.view.FacebookMessenger;
+import ecm.view.FacebookPostScout;
+import ecm.view.TwitterPostScout;
+import ecm.view.PostMonitor;
+import ecm.view.TwitterMessenger;
 import ecm.view.PolicyViewer;
 import java.util.*;
 import ecm.model.*;

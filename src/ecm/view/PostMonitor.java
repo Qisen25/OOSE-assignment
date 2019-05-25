@@ -1,9 +1,11 @@
 package ecm.view;
 
 import ecm.controller.NotificationHandler;
+import ecm.controller.NotificationHandler;
 import ecm.model.KeywordObserver;
 import ecm.model.PolicyAreas;
 import ecm.view.FacebookMessenger;
+import ecm.controller.NotificationHandler;
 import ecm.view.TwitterMessenger;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,7 +53,7 @@ public class PostMonitor extends TimerTask
     //stub for posts
     public void setFBPost()
     {
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 500; i++)
         {
             this.fpost.add("wage increase");
         }
@@ -60,7 +62,7 @@ public class PostMonitor extends TimerTask
     //stub for tweets
     public void setTweets()
     {
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 500; i++)
         {
             this.tweets.add("empire");
         }

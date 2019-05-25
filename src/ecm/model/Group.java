@@ -8,7 +8,6 @@ import java.util.*;
 public class Group implements Member
 {
     private List<Member> members;
-    private List<KeywordObserver> observers;
     
     public Group()
     {
@@ -50,15 +49,6 @@ public class Group implements Member
     public List<Member> getMembers()
     {
         return this.members;
-    }
-      
-    public void printDetails()
-    {
-        for(Member m : members)
-        {
-            Person p = (Person)m;
-            System.out.println(p.toString());
-        }
     }
 
     @Override

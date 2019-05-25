@@ -1,6 +1,9 @@
 
 package ecm.controller;
 
+import ecm.view.TwitterMessenger;
+import ecm.view.SMS;
+import ecm.view.FacebookMessenger;
 import ecm.model.Candidate;
 import ecm.model.Group;
 import ecm.model.KeywordObserver;
@@ -10,9 +13,6 @@ import ecm.model.PolicyAreas;
 import ecm.model.Strategist;
 import ecm.model.TalkingPointObserver;
 import ecm.model.Volunteer;
-import ecm.view.FacebookMessenger;
-import ecm.view.SMS;
-import ecm.view.TwitterMessenger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -164,7 +164,7 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
   
     public void notifyTrend(long scheduleMins)
     {
-        this.addTotalTrend();
+        this.mergeTrends();
         
         if(firstScanMins == 0)
             this.firstScanMins = scheduleMins;
@@ -179,7 +179,8 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             if(!this.holdOffNotif.containsKey(entry.getKey()))
                 this.holdOffNotif.put(entry.getKey(), false);
              
-            if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) == 60)//only trend if greater than 50 and within 1hr 
+            System.out.println(timeSinceSearch(entry.getKey()));
+            if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) <= 60)//only trend if greater than 50 and within 1hr 
                                                                                                  // since first search
             {
                 for(String policy : this.trendRelatedPolicy(entry.getKey()))//find policies with related keywords
@@ -226,6 +227,11 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         return trending && !this.holdOffNotif.get(keyword);
     }
     
+    /**
+     *function to measure time since previous search and current search
+     * @param keyword
+     * @return
+     */
     public long timeSinceSearch(String keyword)
     {
        return (System.currentTimeMillis() / 60000) - this.searchTimes.get(keyword);
@@ -241,7 +247,7 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         this.fbTrends = data;
     }
     
-    public void addTotalTrend()
+    public void mergeTrends()
     {
         this.socialMediaTrends.putAll(twitTrends);
         
@@ -266,6 +272,13 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         notCfg.removeByPolicy(policy);
     }
     
+    /**
+     * if a user is allowed to receive any notification from selected policy
+     * this is found and set up from user via NotificatonConfig
+     * @param id
+     * @param policyName
+     * @return boolean
+     */
     public boolean userWhiteListCheck(int id, String policyName)
     {
         boolean inList = false;
@@ -302,7 +315,8 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     }
     
     /**
-     * check if 24 hours has passed
+     * check if 24 hours has passed if it has passed set hold of period
+     * to false if keyword is in holdOff map
      * @param keyword
      * @param currentSchedMins
      * @return long telling whether to notify or not

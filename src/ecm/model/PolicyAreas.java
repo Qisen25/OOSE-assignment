@@ -102,6 +102,8 @@ public class PolicyAreas implements Policy
         {
             this.policies.remove(policy);
             System.out.println("remove policy success");
+            this.notifyKWRemoval("", "");
+            this.notifyTPRemoval("", "");
         }
        
     }

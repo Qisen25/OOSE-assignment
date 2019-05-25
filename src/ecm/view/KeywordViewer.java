@@ -66,6 +66,14 @@ public class KeywordViewer implements KeywordObserver, Viewer
             }
         }
     }
+    
+    public void displayMapGivenPolicy(String policy)
+    {       
+        for(String key : this.policyWithKeyw.get(policy))
+        {
+            System.out.println("Keyword: \"" + key + "\" from policy: " + policy);
+        }
+    }
 
     @Override
     public void removeKeywordSetUpdate(Set<String> data, String policy, String keyword)

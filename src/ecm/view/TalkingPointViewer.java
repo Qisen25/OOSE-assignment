@@ -68,6 +68,14 @@ public class TalkingPointViewer implements TalkingPointObserver, Viewer
             }
         }
     }
+    
+    public void displayMapGivenPolicy(String policy)
+    {       
+        for(String key : this.policyWithTalk.get(policy))
+        {
+            System.out.println("Keyword: \"" + key + "\" from policy: " + policy);
+        }
+    }
 
     @Override
     public void removeTalkingPointSetUpdate(Set<String> data, String policyName, String recentTalkPoint)

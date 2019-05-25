@@ -4,7 +4,6 @@ import ecm.controller.EcmIO;
 import java.util.*;
 import ecm.controller.GroupController;
 import ecm.controller.PolicyAreaController;
-import ecm.controller.TextDataController;
 import ecm.controller.InvalidMemberRoleException;
 import ecm.controller.MemberNotFoundException;
 import ecm.controller.NotificationHandler;
@@ -20,7 +19,6 @@ public class Menu
 
     private PolicyAreaController pCtrl;
     private GroupController grpCtrl;
-    private TextDataController tCtrl;
     private NotificationHandler notifHand;
     private String mainMenuMsg;
     private String viewDataMsg;
@@ -28,6 +26,7 @@ public class Menu
     private String removeDataMsg;
     private PostMonitor mon;
     private boolean loadStatus;
+    private Timer timer = new Timer();
     
 
     public Menu(GroupController grpContr, PolicyAreaController pCtrl, NotificationHandler notifHand, PostMonitor mon)
@@ -67,7 +66,7 @@ public class Menu
                     break;
                    
                 case 3:
-                    removeData();
+                    removeData(k, t);
                     break;
                     
                 case 4:
@@ -76,6 +75,7 @@ public class Menu
                     
                 case 0:
                     System.out.println("Exit");
+                    timer.cancel();
                     break;
                     
                 default:
@@ -136,7 +136,6 @@ public class Menu
             pCtrl.loadTalkingPoints(source);
             notifHand.clearUsrConfig();
             
-            Timer timer = new Timer();
 
             timer.schedule(this.mon, 0, 60000);
         }
@@ -176,6 +175,9 @@ public class Menu
                 {
                     System.out.println("Are you sure want to reload data? current data and settings will be wiped. y/n");
                     loadChoice = this.strInput();
+                    System.out.println("Do you wish to save? y/n");
+                    String save = this.strInput();
+                    //stub call a save data method
                 }
                 if(loadChoice.equalsIgnoreCase("y"))
                 {
@@ -310,7 +312,7 @@ public class Menu
         }
     }
     
-    private void removeData()
+    private void removeData(KeywordViewer k, TalkingPointViewer t)
     {
         System.out.println(this.removeDataMsg + "\n0. Back to main menu");
         System.out.print("choice:> ");
@@ -318,7 +320,7 @@ public class Menu
         switch (choice)
         {
             case 1:
-                removePolicy();
+                removePolicy(k, t);
                 break;
             case 2:
                 removeMember();
@@ -334,12 +336,29 @@ public class Menu
         }
     }
     
-    private void removePolicy()
+    private void removePolicy(KeywordViewer k, TalkingPointViewer t)
     {
-        System.out.print("Enter name of policy:> ");
-        String name = this.strInput();
-        pCtrl.removePolicy(name);
-        notifHand.removeUsrSettingByPolicy(name);
+        try
+        {
+            System.out.print("Enter name of policy:> ");
+            String name = this.strInput();
+            pCtrl.find(name);
+            System.out.println("Keywords and talking points found");
+            k.displayMapGivenPolicy(name);
+            t.displayMapGivenPolicy(name);
+            System.out.print("Do you wish to delete the policy: y/n:> ");
+            String option = this.strInput();
+            if(option.equalsIgnoreCase("y"))
+            {
+                pCtrl.removePolicy(name);
+                notifHand.removeUsrSettingByPolicy(name);
+                System.out.println("policy removed");
+            }
+        }
+        catch(PolicyNotFoundException e)
+        {
+            System.out.println(e.getMessage());
+        }
     }
     
     private void removeMember()
