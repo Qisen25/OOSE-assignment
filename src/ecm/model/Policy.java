@@ -3,8 +3,8 @@ package ecm.model;
 import java.util.NoSuchElementException;
 import java.util.Set;
 /**
- *
- * @author beepbeep
+ * policy interface component for composite pattern-
+ * @author Kei Sum Wang 19126089
  */
 public interface Policy
 {

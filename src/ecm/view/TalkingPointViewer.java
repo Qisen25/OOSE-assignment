@@ -9,14 +9,14 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- *
- * @author beepbeep
+ * Class to view talking points
+ * @author Kei Sum Wang 19126089
  */
 public class TalkingPointViewer implements TalkingPointObserver, Viewer
 {
     private PolicyAreas pArea;
     private Set<String> allTalk;
-    private Map<String, Set<String>> policyWithTalk;
+    private Map<String, Set<String>> policyWithTalk;// map holding policies and their set of keywords
 
     public TalkingPointViewer(PolicyAreas pArea)
     {
@@ -70,10 +70,13 @@ public class TalkingPointViewer implements TalkingPointObserver, Viewer
     }
     
     public void displayMapGivenPolicy(String policy)
-    {       
-        for(String key : this.policyWithTalk.get(policy))
+    {
+        if(!this.policyWithTalk.isEmpty())
         {
-            System.out.println("Keyword: \"" + key + "\" from policy: " + policy);
+            for(String key : this.policyWithTalk.get(policy))
+            {
+                System.out.println("Talking point: \"" + key + "\" from policy: " + policy);
+            }
         }
     }
 

@@ -2,8 +2,8 @@ package ecm.model;
 
 import java.util.*;
 /**
- *
- * @author beepbeep
+ * composite class for containing Members
+ * @author Kei Sum Wang 19126089
  */
 public class Group implements Member
 {

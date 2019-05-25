@@ -1,5 +1,6 @@
 package ecm.view;
 
+//given SMS class
 public class SMS
 {
     public SMS()

@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 /**
- *
- * @author beepbeep
+ * class handling the delivering of notifications
+ * @author Kei Sum Wang 19126089
  */
 public class NotificationHandler implements KeywordObserver, TalkingPointObserver
 {
@@ -35,10 +35,10 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     private Map<String, Set<String>> talkMap;
     private Map<String, Integer> twitTrends;
     private Map<String, Integer> fbTrends;
-    private Map<String, Integer> socialMediaTrends;
-    private Map<String, Long> searchTimes;
-    private Map<String, Boolean> holdOffNotif;
-    private Map<String, Integer> initialTrend;
+    private Map<String, Integer> socialMediaTrends;//combine the twitter and facebook keyword trends
+    private Map<String, Long> searchTimes;// store search start time before trend
+    private Map<String, Boolean> holdOffNotif;//map determining if keyword should hold of from social media notification
+    private Map<String, Integer> initialTrend;//map storing checkpoint of when a keyword is trending
     private long firstScanMins;
 
     public NotificationHandler(PolicyAreas pAreas, Group grp, SMS sms, TwitterMessenger tMsg, 
@@ -73,8 +73,14 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         this.pAreas.removeTPObserver(this);
     }
 
+    /**
+     * notify when keyword is added
+     * @param data
+     * @param policyName
+     * @param recentKeyword
+     */
     @Override
-    public void keywordSetUpdate(Set<String> data, String policyName, String keyword)
+    public void keywordSetUpdate(Set<String> data, String policyName, String recentKeyword)
     {        
         for(Member m : grp.getMembers())
         {
@@ -82,20 +88,26 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             {
                 if(m.getMobileNum() != 0)
                 {
-                    sms.sendSMS(m.getMobileNum(), "Keyword added: " + keyword);
+                    sms.sendSMS(m.getMobileNum(), "Keyword added to " + policyName + ": " + recentKeyword);
                 }
                 if(!m.getTwitterID().isEmpty())
                 {
-                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword added: " + keyword);
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword added to " + policyName + ": " + recentKeyword);
                 }
                 if(!m.getFacebookID().isEmpty())
                 {
-                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword added: " + keyword);
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword added to " + policyName + ": " + recentKeyword);
                 }
             }
         }
     }
 
+    /**
+     * notify when keyword is removed
+     * @param data
+     * @param policyName
+     * @param recentKeyword
+     */
     @Override
     public void removeKeywordSetUpdate(Set<String> data, String policyName, String recentKeyword)
     {
@@ -105,20 +117,26 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             {
                 if(m.getMobileNum() != 0)
                 {
-                    sms.sendSMS(m.getMobileNum(), "Keyword remove: " + recentKeyword);
+                    sms.sendSMS(m.getMobileNum(), "Keyword remove from " + policyName + ": " + recentKeyword);
                 }
                 if(!m.getTwitterID().isEmpty())
                 {
-                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword remove: " + recentKeyword);
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Keyword remove from " + policyName + ": " + recentKeyword);
                 }
                 if(!m.getFacebookID().isEmpty())
                 {
-                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword remove: " + recentKeyword);
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Keyword remove from " + policyName + ": " + recentKeyword);
                 }
             }
         }
     }
 
+    /**
+     * notify when keyword is added
+     * @param data
+     * @param policyName
+     * @param recentTalk
+     */
     @Override
     public void talkingPointSetUpdate(Set<String> data, String policyName, String recentTalk)
     {
@@ -126,19 +144,25 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         {
             if(m.getMobileNum() != 0)
             {
-                sms.sendSMS(m.getMobileNum(), "Talking point added: " + recentTalk);
+                sms.sendSMS(m.getMobileNum(), "Talking point added to " + policyName + ": " + recentTalk);
             }
             if(!m.getTwitterID().isEmpty())
             {
-                tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point added: " + recentTalk);
+                tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point added to " + policyName + ": " + recentTalk);
             }
             if(!m.getFacebookID().isEmpty())
             {
-                fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point added: " + recentTalk);
+                fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point added to " + policyName + ": " + recentTalk);
             }
         }    
     }
     
+    /**
+     * notify when talking point is removed
+     * @param data
+     * @param policyName
+     * @param recentTalk
+     */
     @Override
     public void removeTalkingPointSetUpdate(Set<String> data, String policyName, String recentTalk)
     {   
@@ -148,23 +172,27 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             {
                 if(m.getMobileNum() != 0)
                 {
-                    sms.sendSMS(m.getMobileNum(), "Talking point removed: " + recentTalk);
+                    sms.sendSMS(m.getMobileNum(), "Talking point removed from " + policyName + ": " + recentTalk);
                 }
                 if(!m.getTwitterID().isEmpty())
                 {
-                    tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point removed: " + recentTalk);
+                    tMsg.sendPrivateMessage(m.getTwitterID(), "Talking point removed from " + policyName + ": " + recentTalk);
                 }
                 if(!m.getFacebookID().isEmpty())
                 {
-                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point removed: " + recentTalk);
+                    fbMsg.sendPrivateMessage(m.getFacebookID(), "Talking point removed from " + policyName + ": " + recentTalk);
                 }
             }
         }    
     }
   
+    /**
+     * notify users when a keyword is trending on social media posts
+     * @param scheduleMins
+     */
     public void notifyTrend(long scheduleMins)
     {
-        this.mergeTrends();
+        this.mergeTrends();// get all social media trends
         
         if(firstScanMins == 0)
             this.firstScanMins = scheduleMins;
@@ -179,9 +207,8 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
             if(!this.holdOffNotif.containsKey(entry.getKey()))
                 this.holdOffNotif.put(entry.getKey(), false);
              
-            System.out.println(timeSinceSearch(entry.getKey()));
             if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) <= 60)//only trend if greater than 50 and within 1hr 
-                                                                                                 // since first search
+                                                                                       // since first search
             {
                 for(String policy : this.trendRelatedPolicy(entry.getKey()))//find policies with related keywords
                 {
@@ -205,8 +232,9 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
                     } 
                 }
                 
-                this.initialTrend.put(entry.getKey(), entry.getValue());
+                this.initialTrend.put(entry.getKey(), entry.getValue());// put keyword in if trending
             }
+            // keyword trends after 1hr stop notify for that keyword
             else if(this.isTrending(entry.getKey()) && timeSinceSearch(entry.getKey()) > 60)
             {    
                 this.searchTimes.put(entry.getKey(), scheduleMins);// store trending keyword and time if 1 hour period reached  
@@ -215,12 +243,17 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }
     }
     
+    /**
+     * checks if keyword is current trending or not
+     * @param keyword
+     * @return boolean if trend or not
+     */
     public boolean isTrending(String keyword)
     {
         if(!this.initialTrend.containsKey(keyword))
             this.initialTrend.put(keyword, 0);//add to map that keeps track of keyword previous trend number
         
-        checkAfterHoldPeriod(keyword);
+        checkAfterHoldPeriod(keyword);// check if keyword is being held off from notifications
         
         boolean trending = this.socialMediaTrends.get(keyword) - this.initialTrend.get(keyword) >= 50;
         
@@ -228,7 +261,7 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
     }
     
     /**
-     *function to measure time since previous search and current search
+     *function to measure time since previous search and current search time
      * @param keyword
      * @return
      */
@@ -247,6 +280,9 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         this.fbTrends = data;
     }
     
+    /**
+     *combine all keywords from all social media
+     */
     public void mergeTrends()
     {
         this.socialMediaTrends.putAll(twitTrends);
@@ -257,23 +293,36 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         }
     }
     
+    /**
+     * configure notification settings
+     * @param id
+     * @param policy
+     */
     public void addUsrSetting(Integer id, String policy)
     {
         notCfg.addPersonAndPolicy(id, policy);
     }
     
+    /**
+     * remove notification settings by member
+     * @param id
+     */
     public void removeUsrSetting(Integer id)
     {
         notCfg.removePersonAndPolicy(id);
     }
     
+    /**
+     * remove notification settings by policy
+     * @param policy
+     */
     public void removeUsrSettingByPolicy(String policy)
     {
         notCfg.removeByPolicy(policy);
     }
     
     /**
-     * if a user is allowed to receive any notification from selected policy
+     * checlif a user is allowed to receive any notification from selected policy
      * this is found and set up from user via NotificatonConfig
      * @param id
      * @param policyName
@@ -298,6 +347,11 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
         return inList;
     }
     
+    /**
+     * gets policies that have the trending keyword
+     * @param trendKey
+     * @return set of related polcies
+     */
     public Set<String> trendRelatedPolicy(String trendKey)
     {
         Set<String> trendPolicies = new HashSet<String>();
@@ -337,9 +391,14 @@ public class NotificationHandler implements KeywordObserver, TalkingPointObserve
                     
     }
     
+    /**
+     * checks if keyword is current on hold from notifications
+     * @param keyword
+     * @return boolean
+     */
     public boolean keywordOnHold(String keyword)
     {
-        if(!this.holdOffNotif.isEmpty())
+        if(!this.holdOffNotif.isEmpty() && this.holdOffNotif.containsKey(keyword))
         {
             return this.holdOffNotif.get(keyword);
         }

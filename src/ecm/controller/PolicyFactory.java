@@ -3,8 +3,8 @@ package ecm.controller;
 import ecm.model.Policy;
 import ecm.model.PolicyEntry;
 /**
- *
- * @author beepbeep
+ * factory responsible for creation of policy entries
+ * @author Kei Sum Wang 19126089
  */
 public class PolicyFactory
 {

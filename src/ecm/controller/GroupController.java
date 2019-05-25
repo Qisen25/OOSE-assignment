@@ -4,8 +4,8 @@ import ecm.model.Group;
 import ecm.model.Member;
 import java.util.List;
 /**
- *
- * @author beepbeep
+ * controller responsible for manipulation group data
+ * @author Kei Sum Wang 19126089
  */
 public class GroupController
 {

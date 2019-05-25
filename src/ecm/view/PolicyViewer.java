@@ -6,8 +6,8 @@ import ecm.model.Policy;
 import ecm.model.PolicyAreas;
 import ecm.model.KeywordObserver;
 /**
- *
- * @author beepbeep
+ * class to view policies
+ * @author Kei Sum Wang 19126089
  */
 public class PolicyViewer implements Viewer
 {

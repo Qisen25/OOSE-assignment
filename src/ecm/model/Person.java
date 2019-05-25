@@ -1,5 +1,9 @@
 package ecm.model;
 
+/**
+ * person class template 
+ * @author Kei Sum Wang 19126089
+ */
 public abstract class Person implements Member
 {
 

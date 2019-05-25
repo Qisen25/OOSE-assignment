@@ -16,8 +16,8 @@ import java.util.TimerTask;
 
 
 /**
- *
- * @author beepbeep
+ * class that is the monitor thread dealing keyword trend searches
+ * @author Kei Sum Wang 19126089
  */
 public class PostMonitor extends TimerTask
 {
@@ -134,7 +134,9 @@ public class PostMonitor extends TimerTask
     }
 
     void setSearchFBMap(Set<String> keys)
-    {    
+    {   
+        this.fbMap.clear();
+        
         for(String key : keys)
         {
             this.fbMap.put(key, 0);
@@ -146,6 +148,8 @@ public class PostMonitor extends TimerTask
     
     void setSearchTwitterMap(Set<String> keys)
     {    
+        this.twitMap.clear();// clear current map to replace keywords to be searched
+        
         for(String key : keys)
         {
             this.twitMap.put(key, 0);

@@ -7,14 +7,14 @@ import ecm.model.KeywordObserver;
 import java.util.HashMap;
 import java.util.Map;
 /**
- *
- * @author beepbeep
+ * class to view keywords
+ * @author Kei Sum Wang 19126089
  */
 public class KeywordViewer implements KeywordObserver, Viewer
 {
     private PolicyAreas pArea;
     private Set<String> allKeywords;
-    private Map<String, Set<String>> policyWithKeyw;
+    private Map<String, Set<String>> policyWithKeyw;//map holding policies with set of keywords
 
     public KeywordViewer(PolicyAreas pArea)
     {
@@ -68,10 +68,13 @@ public class KeywordViewer implements KeywordObserver, Viewer
     }
     
     public void displayMapGivenPolicy(String policy)
-    {       
-        for(String key : this.policyWithKeyw.get(policy))
+    { 
+        if(!this.policyWithKeyw.isEmpty())
         {
-            System.out.println("Keyword: \"" + key + "\" from policy: " + policy);
+            for(String key : this.policyWithKeyw.get(policy))
+            {
+                System.out.println("Keyword: \"" + key + "\" from policy: " + policy);
+            }
         }
     }
 

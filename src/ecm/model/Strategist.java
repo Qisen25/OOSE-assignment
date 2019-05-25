@@ -1,5 +1,9 @@
 package ecm.model;
 
+/**
+ * Strategist concrete class
+ * @author Kei Sum Wang 19126089
+ */
 public class Strategist extends Person
 {
     public Strategist(int id, String name, long mobileNum, String twitterID, String faceBookID) 

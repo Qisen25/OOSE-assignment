@@ -8,8 +8,8 @@ import java.util.List;
 import ecm.model.KeywordObserver;
 
 /**
- *
- * @author beepbeep
+ * class to view Members
+ * @author Kei Sum Wang 19126089
  */
 public class MemberViewer implements Viewer
 {

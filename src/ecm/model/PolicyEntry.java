@@ -2,6 +2,10 @@ package ecm.model;
 
 import java.util.*;
 
+/**
+ * policy entry leaf node for composite pattern
+ * @author Kei Sum Wang 19126089
+ */
 public class PolicyEntry implements Policy
 {
 

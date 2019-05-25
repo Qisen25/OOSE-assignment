@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author beepbeep
+ * observer interface to observe talking points
+ * @author Kei Sum Wang 19126089
  */
 public interface TalkingPointObserver
 {

@@ -2,8 +2,8 @@ package ecm.model;
 
 import java.util.*;
 /**
- *
- * @author beepbeep
+ * class holding notification configuration
+ * @author Kei Sum Wang 19126089
  */
 public class NotificationConfig
 {

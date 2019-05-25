@@ -7,8 +7,8 @@ import ecm.model.Volunteer;
 import ecm.model.Strategist;
 
 /**
- *
- * @author beepbeep
+ * factory responsible for creation of Member objects
+ * @author Kei Sum Wang 19126089
  */
 public class MemberFactory
 {

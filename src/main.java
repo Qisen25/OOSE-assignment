@@ -11,7 +11,7 @@ import ecm.view.*;
 import ecm.controller.*;
 /**
  *
- * @author beepbeep
+ * @author Kei Sum Wang 19126089
  */
 public class main
 {

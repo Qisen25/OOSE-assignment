@@ -1,9 +1,9 @@
 package ecm.controller;
 
 /**
- * Class to load and save data from somewhere
+ * Class to load data from somewhere
  * (Stub)
- * @author beepbeep
+ * @author Kei Sum Wang 19126089
  */
 public class EcmIO
 {

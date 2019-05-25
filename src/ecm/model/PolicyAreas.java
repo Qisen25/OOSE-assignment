@@ -2,8 +2,8 @@ package ecm.model;
 
 import java.util.*;
 /**
- *
- * @author beepbeep
+ * policy area class the composite node
+ * @author Kei Sum Wang 19126089
  */
 public class PolicyAreas implements Policy
 {
@@ -102,8 +102,8 @@ public class PolicyAreas implements Policy
         {
             this.policies.remove(policy);
             System.out.println("remove policy success");
-            this.notifyKWRemoval("", "");
-            this.notifyTPRemoval("", "");
+            this.notifyKWRemoval(name, "All Keywords removed");
+            this.notifyTPRemoval(name, "All Talking points remove");
         }
        
     }

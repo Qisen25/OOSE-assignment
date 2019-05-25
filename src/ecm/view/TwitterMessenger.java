@@ -2,6 +2,7 @@ package ecm.view;
 
 import java.util.*;
 
+//Given template class
 public abstract class TwitterMessenger
 {
     public TwitterMessenger()

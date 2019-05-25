@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author beepbeep
+ * concrete class working with post monitor thread
+ * @author Kei Sum Wang 19126089
  */
 public class FacebookPostScout extends FacebookMessenger implements KeywordObserver
 {
     private PolicyAreas pArea;
-    //should set up set fo strings here
+    
     public FacebookPostScout(PolicyAreas pArea)
     {
         super();

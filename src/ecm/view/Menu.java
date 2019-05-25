@@ -11,8 +11,8 @@ import ecm.model.DuplicateException;
 import ecm.model.PolicyNotFoundException;
 
 /**
- *TODO clean up this messy class maybe move viewers to each respective Controller
- * @author beepbeep
+ * class dealing with user input and output
+ * @author Kei Sum Wang 19126089
  */
 public class Menu
 {
@@ -35,7 +35,7 @@ public class Menu
         this.grpCtrl = grpContr;
         this.notifHand = notifHand;
         this.mainMenuMsg = "++Menu++ \n1. add data \n2. view data \n3. remove data" + 
-                            "\n4. Notification settings \n0. Exit";
+                            "\n4. Notification settings \n5. Keyword trend monitor \n0. Exit";
         this.viewDataMsg = "++View data++\n1. policy\n2. People \n3. keywords\n4. talking points";
         this.addDataMsg = "++Add data++\n1. policy\n2. people\n3. keywords\n4. talking points" + 
                           "\n5. load all data from file ";
@@ -71,6 +71,10 @@ public class Menu
                     
                 case 4:
                     notificationSettings();
+                    break;
+                    
+                case 5:
+                    keywordTrendTask();
                     break;
                     
                 case 0:
@@ -135,9 +139,6 @@ public class Menu
             pCtrl.loadKeywords(source);
             pCtrl.loadTalkingPoints(source);
             notifHand.clearUsrConfig();
-            
-
-            timer.schedule(this.mon, 0, 60000);
         }
         catch(InvalidMemberRoleException | PolicyNotFoundException | DuplicateException e)
         {
@@ -410,6 +411,32 @@ public class Menu
         {
             System.out.println("Member ID: " + pp.getKey() + " | related policy: " + pp.getValue());
         }  
+    }
+    
+    private void keywordTrendTask()
+    {
+        System.out.println("++Keyword Monitor++");
+        System.out.println("1. Start monitor");
+        System.out.println("2. Stop monitor");
+        System.out.println("0. back to main menu");
+        System.out.print("choice:> ");
+        int op = this.intInput();
+        if(op == 1)
+        {
+            if(!this.pCtrl.getKeywords().isEmpty())
+            {
+                timer.schedule(this.mon, 0, 60000);
+            }
+            else
+            {
+                System.out.println("currently no keywords to monitor");
+            }
+        }
+        else if(op == 2)
+        {
+            timer.cancel();
+            System.out.println("Monitor stopped");
+        }
     }
     
     private String strInput()

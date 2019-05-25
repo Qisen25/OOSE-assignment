@@ -10,8 +10,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
- *
- * @author beepbeep
+ * controller dealing with manipulation of policy area data
+ * @author Kei Sum Wang 19126089
  */
 public class PolicyAreaController
 {
@@ -97,5 +97,10 @@ public class PolicyAreaController
             String talkDetails[] = talk.split(":");
             addTalkingPoint(talkDetails[0], talkDetails[1]);
         }
+    }
+    
+    public Set<String> getKeywords()
+    {
+        return this.pAreas.getKeywords();
     }
 }

@@ -1,8 +1,8 @@
 package ecm.model;
 
 /**
- *
- * @author beepbeep
+ * member interface component for composite pattern
+ * @author Kei Sum Wang 19126089
  */
 public interface Member
 {

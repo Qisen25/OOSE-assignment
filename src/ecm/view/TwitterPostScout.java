@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
- * @author beepbeep
+ * concrete class to assist post monitor thread
+ * @author Kei Sum Wang 19126089
  */
 public class TwitterPostScout extends TwitterMessenger implements KeywordObserver
 {
